@@ -14,6 +14,7 @@ SystemRequirements: GNU make
 Version: 0.0-19
 Date: 2011-08-19
 Depends: R (>= 2.12.0), Rcpp (>= 0.8.8), RcppArmadillo (>= 0.2.9)
+Suggests: MASS
 Collate: 'aggregateModelsTable.R' 'getRhos.R' 'makeBasis.R'
     'modelData.R' 'calculateModel.R' 'helpers.R' 'options.R'
     'exhaustive.R' 'invGamma.R' 'rshrinkage.R' 'getSamples.R'
