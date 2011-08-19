@@ -1,3 +1,7 @@
+2011-08-19  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* Add vignette and citation information.
+
 2011-08-04  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
 
 	* Add fast implementation of utility function

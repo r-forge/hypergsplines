@@ -7,12 +7,12 @@ Title: Bayesian model selection with penalised splines and hyper-g
 LinkingTo: Rcpp, RcppArmadillo
 LazyLoad: yes
 Author: Daniel Sabanes Bove <daniel.sabanesbove@ifspm.uzh.ch>
-Description: This R-package implements Bayesian model selection with penalised
-    splines, using a hyper-g prior for the parameters in the normal additive 
-    and the generalised additive model.
+Description: This R-package implements Bayesian model selection with
+    penalised splines, using a hyper-g prior for the parameters in the
+    normal additive and the generalised additive model.
 SystemRequirements: GNU make
-Version: 0.0-18
-Date: 2011-08-04
+Version: 0.0-19
+Date: 2011-08-19
 Depends: R (>= 2.12.0), Rcpp (>= 0.8.8), RcppArmadillo (>= 0.2.9)
 Collate: 'aggregateModelsTable.R' 'getRhos.R' 'makeBasis.R'
     'modelData.R' 'calculateModel.R' 'helpers.R' 'options.R'
