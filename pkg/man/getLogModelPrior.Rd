@@ -3,7 +3,7 @@
 \title{Get the log prior probability for a model}
 \usage{
   getLogModelPrior(config, type = c("flat", "exponential",
-  "independent", "dependent"), modelData)
+  "independent", "dependent", "dep.linear"), modelData)
 }
 \arguments{
   \item{config}{the model configuration vector, or a matrix
@@ -47,6 +47,17 @@
   on all possible configurations. The degrees of freedoms
   are then conditionally independent and uniformly
   distributed on the respective possible values.
+
+  The \dQuote{dep.linear} prior is similar, but imposes a
+  uniform distribution for the number of smoothly included
+  variables conditional on inclusion. The \dQuote{position}
+  of the (smoothly) included variables, i.e. which of the
+  (linearly included) variables are included (as splines),
+  is uniformly distributed on the possible configurations
+  at both steps. The spline variance parameters are then
+  conditionally independent and uniformly distributed on
+  the respective possible values. This leads to a fixed
+  prior probability of linear inclusion of 1/4.
 }
 \examples{
 ## artificial configuration:

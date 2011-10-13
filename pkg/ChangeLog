@@ -1,3 +1,11 @@
+2011-10-13  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* Add another model prior, called "dep.linear". This prior assumes
+	a marginal prior probability of 1/4 for linear inclusion of each
+	covariate. 1/2 is for exclusion, and 1/4 for smooth inclusion.
+	This model prior is similar to the "dependent" model prior, but
+	has a *fixed* prior probability for linear inclusion.
+
 2011-10-04  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
 
 	* R/getBmaSamples.R: Include zeroes for models where the covariate

@@ -3,8 +3,8 @@
 \title{Stochastic search for models with high posterior probability}
 \usage{
   stochSearch(modelData, modelPrior = c("flat",
-  "exponential", "independent", "dependent"), chainlength =
-  100000L, nCache = chainlength, nModels =
+  "exponential", "independent", "dependent", "dep.linear"),
+  chainlength = 100000L, nCache = chainlength, nModels =
   as.integer(max(nCache/100, 1)), computation =
   getComputation())
 }
@@ -14,9 +14,9 @@
   \code{\link{glmModelData}}}
 
   \item{modelPrior}{either \dQuote{flat} (default),
-  \dQuote{exponential}, \dQuote{independent} or
-  \dQuote{dependent}, see \code{\link{getLogModelPrior}}
-  for details.}
+  \dQuote{exponential}, \dQuote{independent},
+  \dQuote{dependent}, or \dQuote{dep.linear}, see
+  \code{\link{getLogModelPrior}} for details.}
 
   \item{chainlength}{length of the model sampling chain
   (default: 100,000)}

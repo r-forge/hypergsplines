@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[stochSearch.R] by DSB Fre 05/08/2011 13:44 (CEST)>
+## Time-stamp: <[stochSearch.R] by DSB Don 13/10/2011 17:27 (CEST)>
 ##
 ## Description:
 ## Does a stochastic search for models with high posterior probability.
@@ -17,6 +17,8 @@
 ##              as in "exhaustive")
 ## 05/08/2011   now the configuration columns in the model data frame are of
 ##              mode "integer".
+## 13/10/2011   include "old" dependent model prior again, where the linear trans-
+##              formation has prior prob. 1/4, which is now called "dep.linear"
 #####################################################################################
 
 ##' @include modelData.R
@@ -28,7 +30,7 @@
 ##' @param modelData the data necessary for model estimation, which is the
 ##' result from \code{\link{modelData}} or \code{\link{glmModelData}} 
 ##' @param modelPrior either \dQuote{flat} (default), \dQuote{exponential},
-##' \dQuote{independent} or \dQuote{dependent}, see
+##' \dQuote{independent}, \dQuote{dependent}, or \dQuote{dep.linear}, see
 ##' \code{\link{getLogModelPrior}} for details. 
 ##' @param chainlength length of the model sampling chain (default: 100,000)
 ##' @param nCache maximum number of best models to be cached at the same time
@@ -54,7 +56,8 @@ stochSearch <- function(modelData,
                         c("flat",
                           "exponential",
                           "independent",
-                          "dependent"),
+                          "dependent",
+                          "dep.linear"),
                         chainlength=100000L,
                         nCache=chainlength,
                         nModels=as.integer(max(nCache / 100, 1)),

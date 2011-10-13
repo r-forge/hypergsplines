@@ -382,7 +382,7 @@ public:
                const Rcpp::LogicalVector& continuous) :
                    nCovs(nCovs),
                    nInclDegrees(nDegrees - 1),
-                   // nSplineDegrees(nDegrees - 2),
+                   nSplineDegrees(nDegrees - 2),
                    continuous(continuous),
                    type(Rcpp::as<Rcpp::StringVector>(R_modelPrior)[0])
     {
@@ -394,7 +394,7 @@ public:
 private:
     const int nCovs;
     const int nInclDegrees;
-    // const int nSplineDegrees;
+    const int nSplineDegrees;
     const Rcpp::LogicalVector continuous;
     std::string type;
 };

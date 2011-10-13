@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[getLogModelPrior.R] by DSB Mit 29/06/2011 16:42 (CEST)>
+## Time-stamp: <[getLogModelPrior.R] by DSB Don 13/10/2011 17:33 (CEST)>
 ##
 ## Description:
 ## Get the log prior probability for a model.
@@ -17,6 +17,7 @@
 ##              - be careful with linear covariates which cannot be
 ##              spline transformed
 ## 29/06/2011   revise model probabilities
+## 13/10/2011   include "dep.linear" again
 #####################################################################################
 
 ##' Get the log prior probability for a model
@@ -40,6 +41,15 @@
 ##' possible configurations. The degrees of freedoms are then conditionally
 ##' independent and uniformly distributed on the respective possible values.
 ##'
+##' The \dQuote{dep.linear} prior is similar, but imposes a uniform distribution
+##' for the number of smoothly included variables conditional on inclusion. The
+##' \dQuote{position} of the (smoothly) included variables, i.e. which of the
+##' (linearly included) variables are included (as splines), is uniformly
+##' distributed on the possible configurations at both steps. The spline
+##' variance parameters are then conditionally independent and uniformly
+##' distributed on the respective possible values. This leads to a fixed prior
+##' probability of linear inclusion of 1/4.
+##'
 ##' @param config the model configuration vector, or a matrix of
 ##' model configurations in rows. There may be additional elements
 ##' to the right, e.g. the log marginal likelihood column/value,
@@ -59,7 +69,8 @@ getLogModelPrior <- function(config,
                              c("flat",
                                "exponential",
                                "independent",
-                               "dependent"),
+                               "dependent",
+                               "dep.linear"),
                              modelData)
 {
     ## determine the prior type
@@ -129,6 +140,36 @@ getLogModelPrior <- function(config,
             
             - lchoose(nCovs, nIncluded) - log1p(nCovs) -
                     nSplinePossible * log(nInclDegrees)
+        }
+        else if(type == "dep.linear")
+        {
+            nCovs <- ncol(modelData$X)
+            nSplineDegrees <- length(modelData$splineDegrees)
+
+            included <- config > 0
+            
+            if(isMatrix)
+            {                
+                nIncluded <- rowSums(config > 0)
+
+                nSplinePossible <- rowSums(included &
+                                           rep(modelData$continuous,
+                                               each=nrow(included)))
+                
+                nSpline <- rowSums(config > 1)                
+            }
+            else
+            {
+                nIncluded <- sum(included)
+                
+                nSplinePossible <- sum(included & modelData$continuous)
+                
+                nSpline <- sum(config > 1)
+            }
+            
+            - lchoose(nCovs, nIncluded) - log1p(nCovs) -
+                lchoose(nSplinePossible, nSpline) - log1p(nSplinePossible) -
+                    nSpline * log(nSplineDegrees)
         }
         else ## if(type=="independent")
         {

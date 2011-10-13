@@ -599,6 +599,7 @@ StatusBar::showProgress(int iteration)
 // ModelPrior
 
 // 29/6/2011: revise model probabilities
+// 13/10/2011: include "dep.linear" model prior, which is the 'old' "dependent" model prior.
 
 double
 ModelPrior::getLogPrior(const ModelPar& mod) const
@@ -660,6 +661,39 @@ ModelPrior::getLogPrior(const ModelPar& mod) const
 
         double result = - Rf_lchoose(nCovs, nIncluded) - log1p(nCovs) -
                 nSplinePossible * log(static_cast<double>(nInclDegrees));
+
+        return result;
+    }
+    else if (type == "dep.linear")
+    {
+        // determine number of included covariates and which are nonlinear:
+        int nIncluded = 0;
+        int nSplinePossible = 0;
+        int nSpline = 0;
+        LogicalVector::iterator j = continuous.begin();
+        for(IntVector::const_iterator i = mod.degIndex.begin();
+                i != mod.degIndex.end();
+                ++i, ++j)
+        {
+            if (*i > 0)
+            {
+                ++nIncluded;
+
+                if(*j)
+                {
+                    ++nSplinePossible;
+
+                    if (*i > 1)
+                    {
+                        ++nSpline;
+                    }
+                }
+            }
+        }
+
+        double result = - Rf_lchoose(nCovs, nIncluded) - log1p(nCovs) -
+                Rf_lchoose(nSplinePossible, nSpline) - log1p(nSplinePossible) -
+                nSpline * log(static_cast<double>(nSplineDegrees));
 
         return result;
     }

@@ -3,30 +3,6 @@
 ################################################################################
 
 # Add inputs and outputs from these tool invocations to the build variables 
-O_SRCS += \
-../backsolve.o \
-../calculateModel.o \
-../dataStructure.o \
-../distributions.o \
-../exhaustive.o \
-../exhaustive2.o \
-../functionWraps.o \
-../getLogMargLikEst.o \
-../getRho.o \
-../glmExhaustive.o \
-../glmGetSamples.o \
-../glmLogMargLik.o \
-../glmStochSearch.o \
-../hyp2f1.o \
-../iwls.o \
-../linApproxDens.o \
-../linalgInterface.o \
-../logMargLik.o \
-../random.o \
-../stochSearch.o \
-../sum.o \
-../zdensity.o 
-
 CPP_SRCS += \
 ../aggregateModelsTable.cpp \
 ../backsolve.cpp \
