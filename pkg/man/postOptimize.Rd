@@ -2,8 +2,8 @@
 \alias{postOptimize}
 \title{Post-optimizing a good model}
 \usage{
-  postOptimize(modelData, modelConfig, computation =
-  getComputation())
+  postOptimize(modelData, modelConfig,
+    computation = getComputation())
 }
 \arguments{
   \item{modelData}{the data necessary for model estimation,

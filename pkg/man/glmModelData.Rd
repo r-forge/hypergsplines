@@ -3,9 +3,10 @@
 \title{Process the data needed for modelling}
 \usage{
   glmModelData(y, X, continuous = rep.int(TRUE, ncol(X)),
-  nKnots = 4L, splineType = "linear", a = 4, weights =
-  rep.int(1L, length(y)), offsets = rep.int(0L, length(y)),
-  family = gaussian, phi = 1)
+    nKnots = 4L, splineType = "linear", a = 4,
+    weights = rep.int(1L, length(y)),
+    offsets = rep.int(0L, length(y)), family = gaussian,
+    phi = 1)
 }
 \arguments{
   \item{y}{the numeric response vector}

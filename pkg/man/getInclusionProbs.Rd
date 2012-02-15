@@ -2,8 +2,9 @@
 \alias{getInclusionProbs}
 \title{Extract posterior inclusion probabilities from the models table}
 \usage{
-  getInclusionProbs(models, modelData, logMargLiks =
-  models$logMargLik, logPriors = models$logPrior)
+  getInclusionProbs(models, modelData,
+    logMargLiks = models$logMargLik,
+    logPriors = models$logPrior)
 }
 \arguments{
   \item{models}{the models table (a data frame), the result

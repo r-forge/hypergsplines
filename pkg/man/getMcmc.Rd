@@ -3,7 +3,7 @@
 \title{Collect the MCMC options}
 \usage{
   getMcmc(samples = 10000L, burnin = 10000L, step = 2L,
-  nIwlsIterations = 1L)
+    nIwlsIterations = 1L)
 }
 \arguments{
   \item{samples}{number of resulting samples (default:

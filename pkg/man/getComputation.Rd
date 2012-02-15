@@ -3,8 +3,8 @@
 \title{Collect the computation options}
 \usage{
   getComputation(verbose = TRUE, debug = FALSE,
-  nGaussHermite = 20L, useOpenMP = TRUE,
-  higherOrderCorrection = TRUE)
+    nGaussHermite = 20L, useOpenMP = TRUE,
+    higherOrderCorrection = TRUE)
 }
 \arguments{
   \item{verbose}{should information on computation progress

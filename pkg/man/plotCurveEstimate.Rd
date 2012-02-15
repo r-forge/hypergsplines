@@ -2,12 +2,14 @@
 \alias{plotCurveEstimate}
 \title{Plot function value estimates}
 \usage{
-  plotCurveEstimate(covName, samples, modelData, nGrid =
-  200L, plevel = 0.95, slevel = plevel, partialResids =
-  TRUE, hpd = TRUE, estimate = c("mean", "median"), ...,
-  ylim = NULL, lty = c(1, 2, 2, 2, 2), col = c("black",
-  "blue", "blue", "green", "green"), xlab = covName, ylab =
-  paste("f(", covName, ")", sep = ""))
+  plotCurveEstimate(covName, samples, modelData,
+    nGrid = 200L, plevel = 0.95, slevel = plevel,
+    partialResids = TRUE, hpd = TRUE,
+    estimate = c("mean", "median"), ..., ylim = NULL,
+    lty = c(1, 2, 2, 2, 2),
+    col = c("black", "blue", "blue", "green", "green"),
+    xlab = covName,
+    ylab = paste("f(", covName, ")", sep = ""))
 }
 \arguments{
   \item{covName}{string with the name of the covariate}

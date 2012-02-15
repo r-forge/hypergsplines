@@ -3,7 +3,7 @@
 \title{Process the data needed for modelling}
 \usage{
   modelData(y, X, continuous = rep.int(TRUE, ncol(X)),
-  nKnots = 4L, splineType = "linear", a = 4)
+    nKnots = 4L, splineType = "linear", a = 4)
 }
 \arguments{
   \item{y}{the numeric response vector}

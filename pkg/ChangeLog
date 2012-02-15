@@ -1,3 +1,8 @@
+2012-02-10  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* Protect even more against numerical failures in the computation
+	of the log marginal likelihood for GLM models.
+
 2011-10-13  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
 
 	* Add another model prior, called "dep.linear". This prior assumes

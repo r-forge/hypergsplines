@@ -3,7 +3,7 @@
 \title{Construction of quantile-based linear spline basis}
 \usage{
   makeBasis(x, type = c("linear", "cubic"), nKnots,
-  settings = NULL)
+    settings = NULL)
 }
 \arguments{
   \item{x}{the covariate vector}

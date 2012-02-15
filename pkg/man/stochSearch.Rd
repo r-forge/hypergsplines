@@ -2,11 +2,11 @@
 \alias{stochSearch}
 \title{Stochastic search for models with high posterior probability}
 \usage{
-  stochSearch(modelData, modelPrior = c("flat",
-  "exponential", "independent", "dependent", "dep.linear"),
-  chainlength = 100000L, nCache = chainlength, nModels =
-  as.integer(max(nCache/100, 1)), computation =
-  getComputation())
+  stochSearch(modelData,
+    modelPrior = c("flat", "exponential", "independent", "dependent", "dep.linear"),
+    chainlength = 100000L, nCache = chainlength,
+    nModels = as.integer(max(nCache/100, 1)),
+    computation = getComputation())
 }
 \arguments{
   \item{modelData}{the data necessary for model estimation,

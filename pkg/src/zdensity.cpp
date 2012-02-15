@@ -273,6 +273,9 @@ NegLogUnnormZDens::operator()(double z)
 
 // *************************************************************************************
 // compute the log marginal likelihood of a specific model
+
+// 10/02/2012: Also protect the creation of the NegLogUnnormZDens object
+// against numerical problems.
 double
 glmGetLogMargLik(const ModelPar& modPar,
                  const GlmModelData& modelData,
@@ -286,27 +289,27 @@ glmGetLogMargLik(const ModelPar& modPar,
     else
     { // so now there is at least a linear term.
 
-        // get negative log unnormalized z density: a function object.
-        NegLogUnnormZDens negLogUnnormZDens(modPar,
-                                            modelData,
-                                            false,
-                                            computation.debug,
-                                            computation.higherOrderCorrection);
-
-        // cache the function, because we do not want to evaluate it more often
-        // than necessary.
-        CachedFunction<NegLogUnnormZDens> cachedNegLogUnnormZDens(negLogUnnormZDens);
-
         // the return value will be placed in here:
         double ret = 0.0;
 
-        // allocate space for zMode and zVar
-        double zMode = 0.0;
-        double zVar = 0.0;
-
-        // protect everything for problems in IWLS
+        // protect everything for problems in IWLS etc.
         try
         {
+            // get negative log unnormalized z density: a function object.
+            NegLogUnnormZDens negLogUnnormZDens(modPar,
+                                                modelData,
+                                                false,
+                                                computation.debug,
+                                                computation.higherOrderCorrection);
+
+            // cache the function, because we do not want to evaluate it more often
+            // than necessary.
+            CachedFunction<NegLogUnnormZDens> cachedNegLogUnnormZDens(negLogUnnormZDens);
+
+            // allocate space for zMode and zVar
+            double zMode = 0.0;
+            double zVar = 0.0;
+
             ret = logIntegral<CachedFunction<NegLogUnnormZDens> >(cachedNegLogUnnormZDens,
                                                                   zMode,
                                                                   zVar,

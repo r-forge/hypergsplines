@@ -4,7 +4,7 @@
 generalised response}
 \usage{
   glmGetSamples(config, modelData, mcmc = getMcmc(),
-  computation = getComputation())
+    computation = getComputation())
 }
 \arguments{
   \item{config}{the model configuration vector}

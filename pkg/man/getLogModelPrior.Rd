@@ -2,8 +2,9 @@
 \alias{getLogModelPrior}
 \title{Get the log prior probability for a model}
 \usage{
-  getLogModelPrior(config, type = c("flat", "exponential",
-  "independent", "dependent", "dep.linear"), modelData)
+  getLogModelPrior(config,
+    type = c("flat", "exponential", "independent", "dependent", "dep.linear"),
+    modelData)
 }
 \arguments{
   \item{config}{the model configuration vector, or a matrix

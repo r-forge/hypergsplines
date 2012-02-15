@@ -2,8 +2,9 @@
 \alias{exhaustive}
 \title{Evaluate all possible models}
 \usage{
-  exhaustive(modelData, modelConfigs = NULL, algorithm =
-  c("2", "1"), computation = getComputation())
+  exhaustive(modelData, modelConfigs = NULL,
+    algorithm = c("2", "1"),
+    computation = getComputation())
 }
 \arguments{
   \item{modelData}{the data necessary for model estimation,

@@ -2,9 +2,8 @@
 \alias{getSearch}
 \title{Collect the search options}
 \usage{
-  getSearch(nModels = as.integer(max(1L,
-  floor(nCache/100))), nCache = 1000000000L, chainlength =
-  10000L)
+  getSearch(nModels = as.integer(max(1L, floor(nCache/100))),
+    nCache = 1000000000L, chainlength = 10000L)
 }
 \arguments{
   \item{nModels}{how many best models should be saved?

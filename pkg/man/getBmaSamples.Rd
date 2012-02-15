@@ -3,7 +3,7 @@
 \title{Get posterior samples from the Bayesian Model Average (BMA)}
 \usage{
   getBmaSamples(config, logPostProbs, nSamples, modelData,
-  mcmc = getMcmc(), computation = getComputation())
+    mcmc = getMcmc(), computation = getComputation())
 }
 \arguments{
   \item{config}{the data frame/matrix with model
