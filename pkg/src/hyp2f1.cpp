@@ -357,6 +357,7 @@ cpp_hyp2f1(SEXP R_interface)
 }
 
 
+// 22/02/2012: corrected sigma2 formula
 double
 log_psi_laplace(double a,
                 double b,
@@ -381,13 +382,13 @@ log_psi_laplace(double a,
 
     // the variance is
     double sigma2 = 1.0 /
-            (- (a + c) * gMode / pow(1.0 + gMode, 2.0) +
-                    a / 2.0 * ((1.0 - x) * gMode) / pow(1.0 + (1.0 - x) * gMode, 2.0));
+            (- (a - c) * gMode / pow(1.0 + gMode, 2.0) +
+                    a  * ((1.0 - x) * gMode) / pow(1.0 + (1.0 - x) * gMode, 2.0));
 
 
     // so the Laplace approximation is
     double ret = M_LN_SQRT_2PI + 0.5 * log(sigma2) + logIntegrandAtTauMode;
-    return(ret);
+    return ret;
 }
 
 

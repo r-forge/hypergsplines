@@ -16,8 +16,8 @@ Description: This R-package implements Bayesian model
     for the parameters in the normal additive and the
     generalised additive model.
 SystemRequirements: GNU make
-Version: 0.0-22
-Date: 2012-02-10
+Version: 0.0-23
+Date: 2012-02-22
 Depends:
     R (>= 2.12.0),
     Rcpp (>= 0.8.8),

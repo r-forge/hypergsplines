@@ -1,3 +1,8 @@
+2012-02-22  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* src/hyp2f1.cpp: Corrected the computation of the Laplace
+	approximation to the log psi function.
+
 2012-02-10  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
 
 	* Protect even more against numerical failures in the computation
