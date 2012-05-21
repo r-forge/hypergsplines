@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[getBmaSamples.R] by DSB Die 04/10/2011 16:20 (CEST)>
+## Time-stamp: <[getBmaSamples.R] by DSB Fre 11/05/2012 12:24 (CEST)>
 ##
 ## Description:
 ## Get posterior samples from the Bayesian Model Average (BMA).
@@ -22,10 +22,15 @@
 ##              based on these samples: it is no longer conditional on inclusion
 ##              of the covariate, but marginally over all models, also those
 ##              not including the covariate.
+## 25/04/2012   remove nModels > 1L restriction
+## 03/05/2012   only include any samples for spline coefs for continuous
+##              covariates
+## 11/05/2012   use "expWithConst" helper function
 #####################################################################################
 
 
 ##' @include getSamples.R
+##' @include helpers.R
 {}
 
 ##' Get posterior samples from the Bayesian Model Average (BMA)
@@ -71,12 +76,12 @@ getBmaSamples <- function(config,
     config <- as.matrix(config[, 1:modelData$nCovs])
     nModels <- nrow(config)
 
-    postProbs <- exp(logPostProbs - min(logPostProbs))
+    postProbs <- expWithConst(logPostProbs)
     
     stopifnot(all(postProbs >= 0),
               any(postProbs > 0),
               all(is.finite(postProbs)),
-              nModels > 1L,
+              ## nModels > 1L,
               identical(length(postProbs),
                         nModels),
               is.integer(nSamples),
@@ -203,8 +208,10 @@ getBmaSamples <- function(config,
                                thisSamples$intercept)
 
         ## for all included covariates:
-        for(cov in covnames)
+        for(j in seq_along(covnames))
         {
+            cov <- covnames[j]
+            
             ## if there are linear coefs
             linearCoefs <-
                 if(! is.null(thisSamples$linearCoefs[[cov]]))
@@ -216,20 +223,26 @@ getBmaSamples <- function(config,
             
             samples.linearCoefs[[cov]] <- c(samples.linearCoefs[[cov]],
                                             linearCoefs)
-          
-            ## and if there are spline coefs
-            splineCoefs <- 
-                if(! is.null(thisSamples$splineCoefs[[cov]]))
-                    ## also include these
-                    thisSamples$splineCoefs[[cov]]
+
+            ## only if this covariate is continuous,
+            ## include samples spline coefficients.
+            ## This is necessary to not confuse "getFunctionSamples"
+            if(modelData$continuous[j])
+            {
+                ## and if there are spline coefs
+                splineCoefs <- 
+                    if(! is.null(thisSamples$splineCoefs[[cov]]))
+                        ## also include these
+                        thisSamples$splineCoefs[[cov]]
                 else
                     ## otherwise include zeroes
                     matrix(data=0,
                            nrow=modelData$dimSplineBasis,
                            ncol=modelFreqs[i])
-            
-            samples.splineCoefs[[cov]] <- cbind(samples.splineCoefs[[cov]],
-                                                splineCoefs)
+                
+                samples.splineCoefs[[cov]] <- cbind(samples.splineCoefs[[cov]],
+                                                    splineCoefs)
+            }
         }
 
         ## echo progress of sampling

@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[getInclusionProbs.R] by DSB Mon 07/02/2011 16:50 (CET)>
+## Time-stamp: <[getInclusionProbs.R] by DSB Fre 11/05/2012 12:23 (CEST)>
 ##
 ## Description:
 ## Extract posterior inclusion probabilities from the models table.
@@ -10,8 +10,11 @@
 ## History:
 ## 13/10/2010   file creation
 ## 07/02/2011   take the minimum only within the finite values of logPost
+## 11/05/2012   use "expWithConst" helper function
 #####################################################################################
 
+##' @include helpers.R
+{}
 
 ##' Extract posterior inclusion probabilities from the models table
 ##'
@@ -43,7 +46,7 @@ getInclusionProbs <- function(models,
 
     ## compute posterior model probabilities
     logPost <- logMargLiks + logPriors
-    post <- exp(logPost - min(logPost[is.finite(logPost)]))
+    post <- expWithConst(logPost)
     post <- post / sum(post)
 
     ## extract the covariate names

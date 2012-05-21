@@ -8,7 +8,7 @@
 #include <linApproxDens.h>
 
 #include <rcppExport.h>
-#include <cassert>
+// #include <cassert>
 #include <random.h>
 
 using namespace Rcpp;
@@ -49,7 +49,7 @@ cpp_linApproxDens(SEXP args,
 LinApproxDens::LinApproxDens(const AVector& args,
                              const AVector& logDens)
 {
-    assert(args.n_elem == logDens.n_elem);
+    // assert(args.n_elem == logDens.n_elem);
 
     // get the (ordered) finite values
     arma::uvec order = arma::sort_index(args, 0);
@@ -107,7 +107,10 @@ LinApproxDens::LinApproxDens(const AVector& args,
     double testArg = ord_args[0];
     for(PosInt i = 0; i < gridLength; ++i, testArg += increment)
     {
-        assert(R_finite(dens(testArg)));
+        if(! R_finite(dens(testArg)))
+        {
+            Rf_error("LinApproxDens: not finite approximation detected");
+        }
     }
 }
 

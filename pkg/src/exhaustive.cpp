@@ -3,14 +3,18 @@
  *
  *  Created on: 14.10.2010
  *      Author: daniel
+ *
+ *  30/03/2012: remove hyperparameter a, instead use string for g-prior
  */
 
 #include <rcppExport.h>
 #include <backsolve.h>
 #include <vector>
+#include <string>
 
 #include <dataStructure.h>
-#include <hyp2f1.h>
+#include <logBFhypergn.h>
+#include <logBFhyperg.h>
 
 using namespace Rcpp;
 
@@ -30,7 +34,7 @@ cpp_exhaustive(SEXP R_modelData,
     const int nObs(as<int>(modelData["nObs"]));
     const int nCovs(as<int>(modelData["nCovs"]));
 
-    double prior_a = as<double>(modelData["a"]);
+    const std::string gPriorString(as<std::string>(modelData["gPrior"]));
 
     const NumericVector ytemp = modelData["y"];
     const arma::colvec y_orig(ytemp.begin(), nObs, false);
@@ -171,11 +175,15 @@ cpp_exhaustive(SEXP R_modelData,
         // additional terms depend on the model structure:
         if(! isNullModel)
         {
-            thisLogMargLik = thisLogMargLik - log(dimLinear + prior_a - 2.0) +
-                    log_hyp2f1((nObs - 1.0) / 2.0,
-                               1.0,
-                               (dimLinear + prior_a) / 2.0,
-                               thisR2);
+            // and then add the log BF, depending on the hyperprior on g:
+            if(gPriorString == "hyper-g/n")
+            {
+                thisLogMargLik += logBFhypergn(nObs, dimLinear, thisR2);
+            }
+            else // gPriorString == "hyper-g"
+            {
+                thisLogMargLik += logBFhyperg(nObs, dimLinear, thisR2);
+            }
 
             // if splines were used, we must also take into account the
             // covariance matrix V for the marginal likelihood:

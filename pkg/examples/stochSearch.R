@@ -24,8 +24,10 @@ md <- modelData(y=Employed,
                       Year),
                 splineType="cubic")
 
-## do a stochastic search over the model space
-res <- stochSearch(md)
+## do a stochastic search over the model space,
+## and choose a special start model
+res <- stochSearch(md,
+                   startModel=c(2, 2, 2, 2))
 res
 
 ## and now for generalised response:
@@ -39,8 +41,10 @@ md <- glmModelData(y=as.numeric(Employed > 64),
                          Year),
                    family=binomial)
 
-## do a stochastic search over the model space
+## do a stochastic search over the model space,
+## also with a special start model
 res <- stochSearch(md,
+                   startModel=c(0, 1, 2, 1),
                    chainlength=1000L,
                    computation=
                    getComputation(higherOrderCorrection=FALSE))

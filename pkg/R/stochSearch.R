@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[stochSearch.R] by DSB Don 13/10/2011 17:27 (CEST)>
+## Time-stamp: <[stochSearch.R] by DSB Don 10/05/2012 19:26 (CEST)>
 ##
 ## Description:
 ## Does a stochastic search for models with high posterior probability.
@@ -19,6 +19,7 @@
 ##              mode "integer".
 ## 13/10/2011   include "old" dependent model prior again, where the linear trans-
 ##              formation has prior prob. 1/4, which is now called "dep.linear"
+## 10/05/2012   add new option "startModel"
 #####################################################################################
 
 ##' @include modelData.R
@@ -32,6 +33,8 @@
 ##' @param modelPrior either \dQuote{flat} (default), \dQuote{exponential},
 ##' \dQuote{independent}, \dQuote{dependent}, or \dQuote{dep.linear}, see
 ##' \code{\link{getLogModelPrior}} for details. 
+##' @param startModel model configuration where the MCMC chain starts.
+##' Defaults to the null model. Checked for coherency with \code{modelData}. 
 ##' @param chainlength length of the model sampling chain (default: 100,000)
 ##' @param nCache maximum number of best models to be cached at the same time
 ##' during the model sampling (by default equal to \code{chainlength})
@@ -58,6 +61,7 @@ stochSearch <- function(modelData,
                           "independent",
                           "dependent",
                           "dep.linear"),
+                        startModel=rep(0, modelData$nCovs),
                         chainlength=100000L,
                         nCache=chainlength,
                         nModels=as.integer(max(nCache / 100, 1)),
@@ -68,10 +72,20 @@ stochSearch <- function(modelData,
     ## checks
     stopifnot(chainlength > 1,
               nModels >= 1,
-              nModels <= nCache)
+              nModels <= nCache,
+              identical(length(startModel), modelData$nCovs))
+    checkModelConfigs(modelConfigs=
+                      matrix(data=startModel,
+                             nrow=1,
+                             ncol=modelData$nCovs,
+                             dimnames=
+                             list(NULL,
+                                  colnames(modelData$X))),
+                      modelData=modelData)
 
     ## bundle the search settings
-    searchSettings <- list(chainlength=as.integer(chainlength),
+    searchSettings <- list(startModel=as.double(startModel),
+                           chainlength=as.integer(chainlength),
                            nCache=as.integer(nCache),
                            nModels=as.integer(nModels))
 

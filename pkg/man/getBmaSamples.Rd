@@ -56,10 +56,12 @@ attach(longley)
 
 ## get model data
 md <- modelData(y=Employed,
-                X=cbind(GNP, Armed.Forces))
+                X=cbind(GNP, Armed.Forces),
+                gPrior="hyper-g/n")
 
 ## get models table
 tab <- exhaustive(modelData=md)
+tab
 
 ## get posterior samples from the BMA assuming
 ## a flat model prior
@@ -68,6 +70,9 @@ res <- getBmaSamples(config=tab,
                      nSamples=1000L,
                      modelData=md)
 str(res)
+
+summary(res$t)
+hist(res$t, nclass=100)
 
 ## now for generalised response:
 
@@ -93,6 +98,8 @@ res <- getBmaSamples(config=tab,
                      computation=
                      getComputation(higherOrderCorrection=FALSE))
 str(res)
+
+hist(res$t, nclass=100)
 res$config
 }
 \author{

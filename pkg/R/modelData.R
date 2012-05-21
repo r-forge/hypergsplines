@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[modelData.R] by DSB Don 28/07/2011 11:43 (CEST)>
+## Time-stamp: <[modelData.R] by DSB Don 10/05/2012 18:26 (CEST)>
 ##
 ## Description:
 ## Calculate the information from the input data which is used for both
@@ -28,6 +28,8 @@
 ## 21/01/2011   try splineDegrees up to dimSplineBasis - 1 instead of nKnots - 1,
 ##              this is a difference for O'Sullivan splines.
 ## 28/07/2011   save lambdas.list, different interface for getRhos
+## 29/03/2012   - remove the hyperparameter a for the hyper-g prior
+##              - add the hyper-g/n prior
 #####################################################################################
 
 ##' @include makeBasis.R
@@ -38,13 +40,14 @@
 ##'
 ##' @param y the numeric response vector
 ##' @param X the numeric matrix of covariates
-##' @param continuous logical vector specifying which covariates
-##' really are continous and can be included nonlinearly in a model
-##' (default: all covariates are continuous)
+##' @param continuous logical vector specifying which covariates really are
+##' continous and can be included nonlinearly in a model (default: all
+##' covariates are continuous)
 ##' @param nKnots number of (quantile-based) spline knots (default: 4)
-##' @param splineType type of splines to be used (default: \dQuote{linear}),
-##' see \code{\link{makeBasis}} for possible types.
-##' @param a hyperparameter for the hyper-g prior (default: 4)
+##' @param splineType type of splines to be used (default: \dQuote{linear}), see
+##' \code{\link{makeBasis}} for possible types.
+##' @param gPrior hyperprior for g, either \dQuote{hyper-g/n} (default) or
+##' \dQuote{hyper-g}.
 ##' @return a list with the internally needed results.
 ##'
 ##' @example examples/modelData.R
@@ -57,7 +60,7 @@ modelData <- function(y,
                       continuous=rep.int(TRUE, ncol(X)),
                       nKnots=4L,
                       splineType="linear",
-                      a=4)
+                      gPrior=c("hyper-g/n", "hyper-g"))
 { 
     ## checks and extracts:
     stopifnot(is.vector(y),
@@ -67,21 +70,20 @@ modelData <- function(y,
               all(! is.na(y)),
               all(! is.na(X)),
               is.logical(continuous),
-              is.integer(nKnots),
-              is.numeric(a))
+              is.integer(nKnots))
    
     nKnots <- nKnots[1L]
-    a <- a[1L]
     
     nObs <- length(y)
     nCovs <- ncol(X)
+
+    gPrior <- match.arg(gPrior)
     
     stopifnot(identical(nObs,
                         nrow(X)),
               identical(length(continuous),
                         nCovs),
-              nKnots > 1L && nKnots < nObs - 2L,
-              a > 3 && a <= 4)
+              nKnots > 1L && nKnots < nObs - 2L)
 
     ## ensure that X has column names
     if(is.null(colnames(X)))
@@ -189,7 +191,7 @@ modelData <- function(y,
     ## return the list with the results
     return(list(nKnots=nKnots,
                 dimSplineBasis=dimSplineBasis,
-                a=a,
+                gPrior=gPrior,
                 nObs=nObs,
                 nCovs=nCovs,
                 y=y,
@@ -203,4 +205,7 @@ modelData <- function(y,
                 rho.list=rho.list,
                 lambdas.list=lambdas.list))
 }
+
+
+
 

@@ -16,6 +16,7 @@ using namespace Rcpp;
 //using namespace std;
 
 
+// 25/04/2012: erase last "-" from meta model strings
 SEXP cpp_aggregateModelsTable(SEXP R_modelsTable,
                               SEXP R_posterior,
                               SEXP R_cut)
@@ -65,7 +66,12 @@ SEXP cpp_aggregateModelsTable(SEXP R_modelsTable,
             // and go on to next element for next time
             ++(*i_iter);
         }
-        const std::string thisMetaConfig = stream.str();
+
+        // convert to string
+        std::string thisMetaConfig = stream.str();
+
+        // erase the last character, which is "-"
+        thisMetaConfig.erase(thisMetaConfig.size() - 1);
 
         // insert into vector
         metaConfigs.push_back(thisMetaConfig);

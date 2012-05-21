@@ -49,6 +49,11 @@ RcppExport SEXP cpp_log_hyp2f1_laplace(SEXP R_interface);
 RcppExport SEXP cpp_logMargLik(SEXP R_modelConfig,
                                SEXP R_modelData);
 
+RcppExport SEXP cpp_logMargLikHypergn(SEXP R_n,
+                                      SEXP R_p,
+                                      SEXP R_SSE0,
+                                      SEXP R_SSEm);
+
 RcppExport SEXP cpp_glmLogMargLik(SEXP R_modelConfig,
                                   SEXP R_modelData,
                                   SEXP R_computation);

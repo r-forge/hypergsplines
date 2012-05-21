@@ -16,7 +16,10 @@
 
 using namespace Rcpp;
 
-
+// 02/05/2012: it is no longer mandatory to have at least
+//             two continuous covariates. For 0 or 1 continuous
+//             covariates the move step is always chosen.
+// 10/05/2012: allow flexible starting model
 SEXP
 cpp_stochSearch(SEXP R_modelData,
                 SEXP R_modelPrior,
@@ -26,14 +29,15 @@ cpp_stochSearch(SEXP R_modelData,
 
     ModelData modelData(R_modelData);
 
-    if(modelData.nContCovs < 2)
-    {
-        Rf_error("There must at least be two continuous covariates!");
-    }
+    // determine probability of a "move" step
+    const double moveProb = (modelData.nContCovs < 2) ? 1.01 : 0.75;
 
     ModelPrior modelPrior(R_modelPrior, modelData.nCovs, modelData.nDegrees, modelData.continuous);
 
     List searchSettings(R_searchSettings);
+
+    ModelPar startModPar(as<NumericVector>(searchSettings["startModel"]));
+    startModPar.compDegIndex(modelData.degrees);
     const int chainlength = as<int>(searchSettings["chainlength"]);
     const int nCache = as<int>(searchSettings["nCache"]);
     const int nModels = as<int>(searchSettings["nModels"]);
@@ -41,9 +45,7 @@ cpp_stochSearch(SEXP R_modelData,
     // setup cache infrastructure
     ModelCache modelCache(nCache);
 
-    // start model is the null model
-    const ModelPar startModPar(modelData.nCovs);
-
+    // compute start model properties
     double thisR2 = 0;
     const double logMargLik = modelData.getLogMargLik(startModPar, thisR2);
     const double logPrior = modelPrior.getLogPrior(startModPar);
@@ -74,7 +76,7 @@ cpp_stochSearch(SEXP R_modelData,
         double logPropRatio;
 
         // randomly select move type: move or switch.
-        if (unif_rand() < 0.75) // this may also be a search option in the future
+        if (unif_rand() < moveProb) // this may also be a search option in the future
         {
             // ****************************** //
             // implement a move

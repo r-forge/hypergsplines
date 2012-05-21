@@ -86,7 +86,7 @@ modelData.pima <- with(pima,
 \label{sec:stoch-model-search}
 
 <<pima-search-setup>>=
-chainlength.pima <- 1000
+chainlength.pima <- 100
 computation.pima <- getComputation(useOpenMP=FALSE,
                                    higherOrderCorrection=FALSE)
 @ 
@@ -95,7 +95,7 @@ Next, we will do a stochastic search on the (very large) model space to find
 ``good'' models. Here we have to decide on the model prior, and in this example
 we use the \texttt{dependent} type which corrects for the implicit multiplicity
 of testing. We use a \texttt{chainlength} of $\Sexpr{chainlength.pima}$, which
-is rather small but enough for illustration purposes (usually one should use at
+is very small but enough for illustration purposes (usually one should use at
 least $100\,000$), and save all models (in general \texttt{nModels} is the
 number of models which are saved from all visited models). Finally, we decide
 that we do not want to use OpenMP acceleration and no higher order correction
@@ -148,8 +148,8 @@ model which has configuration (\Sexpr{paste(map.pima,collapse=",")}), then we
 first need to generate parameter samples from that model:
 
 <<pima-sampling>>=
-mcmc.pima <- getMcmc(samples=5000L,
-                     burnin=1000L,
+mcmc.pima <- getMcmc(samples=500L,
+                     burnin=100L,
                      step=1L,
                      nIwlsIterations=2L)
 
@@ -252,7 +252,7 @@ average.samples.pima <-
          getBmaSamples(config=models[1:10,],
                        logPostProbs=models$logMargLik[1:10] + 
                        models$logPrior[1:10],
-                       nSamples=5000L,
+                       nSamples=500L,
                        modelData=modelData.pima,
                        mcmc=mcmc.pima,
                        computation=computation.pima))

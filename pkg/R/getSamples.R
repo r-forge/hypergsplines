@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[getSamples.R] by DSB Don 28/07/2011 11:43 (CEST)>
+## Time-stamp: <[getSamples.R] by DSB Mit 25/04/2012 17:42 (CEST)>
 ##
 ## Description:
 ## Get posterior samples for a specific model configuration.
@@ -22,7 +22,10 @@
 ##              instead of matrix with row names (necessary for compatibility
 ##              of output with that from getBmaSamples).
 ## 26/07/2011   start revision to allow for non-integer vector config
-## 28/07/2011   different interface for getRhos
+## 28/07/2011   use new interface for getRhos
+## 29/03/2012   use new interface for rshrinkage
+## 25/04/2012   fix bug in null model case: bStar was numeric(0) in that case
+##              before. 
 #####################################################################################
 
 
@@ -70,16 +73,21 @@ getSamples <- function(config,
             numeric(0)
         else
             rshrinkage(n=nSamples,
-                       R2=marginal$coefR2,
-                       nObs=modelData$nObs,
-                       p=marginal$dim.lin,
-                       alpha=modelData$a)
+                       marginal=marginal,
+                       modelData=modelData)
 
     ## compute corresponding parameters of the inverse gamma posterior
     aStar <- (modelData$nObs - 1) / 2
 
     sst <- sum((marginal$y - marginal$meanY)^2)
-    bStar <- (1 - samples.t * marginal$coefR2) * sst / 2
+
+    tTimesR2 <-
+        if(marginal$isNullModel)
+            0
+        else
+            samples.t * marginal$coefR2        
+    
+    bStar <- (1 - tTimesR2) * sst / 2
 
     ## now sample the regression variance
     samples.sigma2 <- rinvGamma(n=nSamples,

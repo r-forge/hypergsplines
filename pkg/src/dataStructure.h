@@ -3,6 +3,8 @@
  *
  *  Created on: 14.03.2011
  *      Author: daniel
+ *
+ *  30/03/2012: remove hyperparameter a, instead use string for g-prior
  */
 
 #ifndef DATASTRUCTURE_H_
@@ -159,6 +161,10 @@ struct ModelPar
     // and we also have the degree indices in here
     IntVector degIndex;
 
+    // compute degree index vector, given a degree vector
+    void
+    compDegIndex(const IntVector& degrees);
+
     // start with an empty (null) model:
     ModelPar(int nCovs) :
         config(nCovs, 0.0),
@@ -195,6 +201,7 @@ struct ModelPar
     // return a textual description of this model configuration
     std::string
     print() const;
+
 };
 
 // ModelData: this wraps the general input like X, y etc.
@@ -220,7 +227,7 @@ public:
 
     const Rcpp::LogicalVector continuous;
 
-    const double prior_a;
+    const std::string gPriorString;
 
     // the vector of degrees. assumed to be sorted increasingly,
     // starting with 0, 1 and continuing with the "spline" degrees.
@@ -279,7 +286,7 @@ public:
 
     const Rcpp::LogicalVector continuous;
 
-    const double prior_a;
+    const std::string gPriorString;
 
     // the vector of degrees. assumed to be sorted increasingly,
     // starting with 0, 1 and continuing with the "spline" degrees.

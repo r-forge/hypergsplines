@@ -4,6 +4,7 @@
 \usage{
   stochSearch(modelData,
     modelPrior = c("flat", "exponential", "independent", "dependent", "dep.linear"),
+    startModel = rep(0, modelData$nCovs),
     chainlength = 100000L, nCache = chainlength,
     nModels = as.integer(max(nCache/100, 1)),
     computation = getComputation())
@@ -17,6 +18,10 @@
   \dQuote{exponential}, \dQuote{independent},
   \dQuote{dependent}, or \dQuote{dep.linear}, see
   \code{\link{getLogModelPrior}} for details.}
+
+  \item{startModel}{model configuration where the MCMC
+  chain starts. Defaults to the null model. Checked for
+  coherency with \code{modelData}.}
 
   \item{chainlength}{length of the model sampling chain
   (default: 100,000)}
@@ -72,8 +77,10 @@ md <- modelData(y=Employed,
                       Year),
                 splineType="cubic")
 
-## do a stochastic search over the model space
-res <- stochSearch(md)
+## do a stochastic search over the model space,
+## and choose a special start model
+res <- stochSearch(md,
+                   startModel=c(2, 2, 2, 2))
 res
 
 ## and now for generalised response:
@@ -87,8 +94,10 @@ md <- glmModelData(y=as.numeric(Employed > 64),
                          Year),
                    family=binomial)
 
-## do a stochastic search over the model space
+## do a stochastic search over the model space,
+## also with a special start model
 res <- stochSearch(md,
+                   startModel=c(0, 1, 2, 1),
                    chainlength=1000L,
                    computation=
                    getComputation(higherOrderCorrection=FALSE))

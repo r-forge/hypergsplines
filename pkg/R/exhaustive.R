@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[exhaustive.R] by DSB Mit 29/06/2011 11:56 (CEST)>
+## Time-stamp: <[exhaustive.R] by DSB Don 10/05/2012 18:32 (CEST)>
 ##
 ## Description:
 ## Implement the first function in this package. This evaluates all possible
@@ -23,10 +23,12 @@
 ## 10/06/2011   Add optional argument "modelConfigs"
 ## 29/06/2011   Catch errors in expand.grid, which stem from too large model
 ##              spaces.
+## 10/05/2012   use new helper function "checkModelConfigs"
 #####################################################################################
 
 ##' @include modelData.R
 ##' @include options.R
+##' @include helpers.R
 {}
 
 ##' Evaluate all possible models
@@ -93,22 +95,9 @@ exhaustive <- function(modelData,
     }
     else
     {
-        stopifnot(is.matrix(modelConfigs),
-                  (nModels <- nrow(modelConfigs)) > 0L,
-                  (nCovs <- ncol(modelConfigs)) > 0L)
-        mode(modelConfigs) <- "integer"
-        
-        ## check for coherency with modelData
-        stopifnot(identical(nCovs, modelData$nCovs),
-                  identical(colnames(modelConfigs), colnames(modelData$X)))
-
-        for(j in seq_len(modelData$nCovs))
-        {
-            if(modelData$continuous[j])
-                stopifnot(all(modelConfigs[, j] %in% modelData$degrees))
-            else
-                stopifnot(all(modelConfigs[, j] %in% 0:1))
-        }
+        ## if it is provided, check for consistency
+        checkModelConfigs(modelConfigs=modelConfigs,
+                          modelData=modelData)
     }
 
     

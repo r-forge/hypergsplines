@@ -1,3 +1,54 @@
+2012-05-11  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* R/helpers.R: new "expWithConst" helper function which will avoid
+	infinite posterior probabilities in "getBmaSamples", e.g.
+
+2012-05-10  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* R/stochSearch.R: add new option "startModel" so that the user
+	can choose not to start the MCMC chain from the null model. This
+	might be useful to check for good mixing of the MCMC sampler: if
+	the results from different runs with different starting models and
+	different RNG seeds deliver very similar results, then everything
+	is OK.
+
+2012-05-03  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* R/getBmaSamples.R: only include any samples for spline coefs for
+	continuous covariates
+
+2012-05-02  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* src/stochSearch.cpp: it is no longer mandatory to have at least
+	two continuous covariates
+
+2012-04-25  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* R/getSamples.R: fix bug in null model case
+
+	* We have some optimisation problem in the postOptimize examples,
+	todo! For now comment the erroneous lines.
+
+	* src/aggregateModelsTable.cpp: Remove ugly "-" strings at the end
+	of the meta-configuration
+
+2012-03-30  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* Hyper-g/n prior is now fully integrated into the package.
+
+2012-03-29  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* Adapted the R code to the hyper-g/n prior addition, now the C++
+	code is next. Note that the default hyperprior is now the
+	hyper-g/n prior, no longer the hyper-g prior!
+
+2012-03-28  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* src/logMargLikHypergn.cpp: Include the Laplace approximation
+	code from the R-package BAS to compute the log marginal likelihood
+	under the hyper-g/n prior. This is first done for testing
+	purposes, and starts development of version 0.0-24.
+
 2012-02-22  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
 
 	* src/hyp2f1.cpp: Corrected the computation of the Laplace

@@ -6,6 +6,8 @@
  *
  * Classes for priors on the shrinkage paramater g.
  *
+ * 30/03/2012: add the hyper-g/n prior
+ *
  */
 
 #ifndef GPRIORS_H_
@@ -77,6 +79,35 @@ public:
 private:
     // the hyperparameter
     const double a;
+};
+
+// ***************************************************************************************************//
+
+// Hyper-g/n prior
+class HypergnPrior : public GPrior
+{
+public:
+    // ctr
+    HypergnPrior(double a,
+                 int nObs) :
+        a(a),
+        n(static_cast<double>(nObs))
+        {
+        }
+
+    // Log prior density
+    double
+    logDens(double g) const
+    {
+        return log(a - 2.0) - M_LN2 - log(n) - (a / 2.0) * log1p(g/n);
+    }
+
+private:
+    // the hyperparameter
+    const double a;
+
+    // the sample size
+    const double n;
 };
 
 // ***************************************************************************************************//

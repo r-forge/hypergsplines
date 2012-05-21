@@ -20,6 +20,10 @@ using namespace Rcpp;
 
 // todo: Note that this function is almost identical to the normal response version....
 // This is clear but not used at the moment.
+// 02/05/2012: it is no longer mandatory to have at least
+//             two continuous covariates. For 0 or 1 continuous
+//             covariates the move step is always chosen.
+// 10/05/2012: allow flexible starting model
 SEXP
 cpp_glmStochSearch(SEXP R_modelData,
                    SEXP R_modelPrior,
@@ -29,11 +33,16 @@ cpp_glmStochSearch(SEXP R_modelData,
     // convert and extract the modelData object:
     GlmModelData modelData(R_modelData);
 
+    // determine probability of a "move" step
+    const double moveProb = (modelData.nContCovs < 2) ? 1.01 : 0.75;
+
     // the prior on the model space:
     ModelPrior modelPrior(R_modelPrior, modelData.nCovs, modelData.nDegrees, modelData.continuous);
 
     // the search settings in this space:
     List searchSettings(R_searchSettings);
+    ModelPar startModPar(as<NumericVector>(searchSettings["startModel"]));
+    startModPar.compDegIndex(modelData.degrees);
     const int chainlength = as<int>(searchSettings["chainlength"]);
     const int nCache = as<int>(searchSettings["nCache"]);
     const int nModels = as<int>(searchSettings["nModels"]);
@@ -44,9 +53,7 @@ cpp_glmStochSearch(SEXP R_modelData,
     // setup cache infrastructure
     ModelCache modelCache(nCache);
 
-    // start model is the null model
-    const ModelPar startModPar(modelData.nCovs);
-
+    // compute start model properties
     const double logMargLik = glmGetLogMargLik(startModPar, modelData, computation);
     const double logPrior = modelPrior.getLogPrior(startModPar);
 
@@ -76,7 +83,7 @@ cpp_glmStochSearch(SEXP R_modelData,
         double logPropRatio;
 
         // randomly select move type: move or switch.
-        if (unif_rand() < 0.75) // this may also be a search option in the future
+        if (unif_rand() < moveProb) // this may also be a search option in the future
         {
             // ****************************** //
             // implement a move

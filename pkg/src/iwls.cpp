@@ -1,7 +1,7 @@
 #include <iwls.h>
 #include <types.h>
 #include <rcppExport.h>
-#include <cassert>
+// #include <cassert>
 #include <stdexcept>
 #include <sstream>
 #include <linalgInterface.h>
@@ -18,7 +18,7 @@ static double
 criterion(const AVector& a, const AVector& b)
 {
     // check lengths
-    assert(a.n_elem == b.n_elem);
+    // assert(a.n_elem == b.n_elem);
 
     // this will be the returned value
     double ret = 0.0;
@@ -431,6 +431,7 @@ Iwls::startWithNewCoefs(PosInt maxIter,
 
 // 7/4/2011 checked the function
 // 19/5/2011 modified to accomodate offsets
+// 20/4/2012 other computation of scaledSplineCoefs to avoid Armadillo problems
 double
 Iwls::computeLogUnPosteriorDens(const Parameter& sample) const
 {
@@ -473,8 +474,7 @@ Iwls::computeLogUnPosteriorDens(const Parameter& sample) const
         double splineQuadForm = 0.0;
         if(dimZ > 0)
         {
-            AVector scaledSplineCoefs = arma::diagmat(splinePartPrecSqrtEntries) *
-                    sample.coefs.subvec(dimLinear + 1, nCoefs - 1);
+            AVector scaledSplineCoefs = splinePartPrecSqrtEntries % sample.coefs.subvec(dimLinear + 1, nCoefs - 1);
             splineQuadForm = arma::dot(scaledSplineCoefs, scaledSplineCoefs);
         }
 

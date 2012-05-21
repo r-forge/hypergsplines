@@ -3,7 +3,8 @@
 \title{Process the data needed for modelling}
 \usage{
   glmModelData(y, X, continuous = rep.int(TRUE, ncol(X)),
-    nKnots = 4L, splineType = "linear", a = 4,
+    nKnots = 4L, splineType = "linear",
+    gPrior = c("hyper-g/n", "hyper-g"),
     weights = rep.int(1L, length(y)),
     offsets = rep.int(0L, length(y)), family = gaussian,
     phi = 1)
@@ -25,8 +26,8 @@
   \dQuote{linear}), see \code{\link{makeBasis}} for
   possible types.}
 
-  \item{a}{hyperparameter for the hyper-g prior (default:
-  4)}
+  \item{gPrior}{hyperprior for g, either \dQuote{hyper-g/n}
+  (default) or \dQuote{hyper-g}.}
 
   \item{weights}{optionally a vector of positive weights
   (if not provided, a vector of ones)}

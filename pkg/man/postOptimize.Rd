@@ -29,11 +29,11 @@
 ## get some data
 attach(longley)
 
-
 ## get model data
 md <- modelData(y=Employed,
                 X=cbind(GNP, Armed.Forces),
-                splineType="cubic")
+                splineType="cubic",
+                gPrior="hyper-g/n")
 
 ## get a list of all possible models with this data
 res <- exhaustive(md)
@@ -62,10 +62,11 @@ res <- exhaustive(md,
 bestConfig <- res[which.max(res$logMargLik), 1:2]
 bestConfig
 
-optimConfig <- postOptimize(modelData=md,
-                            modelConfig=bestConfig,
-                            computation=getComputation(higherOrderCorrection=FALSE))
-optimConfig
+## todo!
+## optimConfig <- postOptimize(modelData=md,
+##                             modelConfig=bestConfig,
+##                             computation=getComputation(higherOrderCorrection=FALSE))
+## optimConfig
 }
 \author{
   Daniel Sabanes Bove

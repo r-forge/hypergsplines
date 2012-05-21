@@ -89,7 +89,8 @@ SEXP cpp_calculateModel(SEXP R_config,
 //        Function getRhos(package.find("getRhos"));
 
         // construct the covariance matrix of the marginal model:
-        arma::mat V = arma::eye(nObs, nObs);
+        arma::mat V(nObs, nObs);
+        V.eye();
 
         for(IntegerVector::iterator
                 s = whichSpline.begin();

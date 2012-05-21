@@ -2,26 +2,25 @@
 \alias{rshrinkage}
 \title{Sample from the model-specific posterior of the shrinkage factor}
 \usage{
-  rshrinkage(n, R2, nObs, p, alpha)
+  rshrinkage(n, marginal, modelData)
 }
 \arguments{
   \item{n}{number of samples}
 
-  \item{R2}{coefficient of determination in the model}
+  \item{marginal}{the marginal model, which is the result
+  from \code{\link{calculateModel}}}
 
-  \item{nObs}{number of observations used to fit the model}
-
-  \item{p}{number of design matrix columns without counting
-  the intercept}
-
-  \item{alpha}{used hyperparameter for hyper-g prior}
+  \item{modelData}{the data necessary for model estimation,
+  which is the result from \code{\link{modelData}}}
 }
 \value{
   \code{n} posterior shrinkage factor samples
 }
 \description{
   Sample from the model-specific posterior of the shrinkage
-  factor t = g / (1 + g), using inverse sampling.
+  factor t = g / (1 + g), using either inverse sampling
+  (for the hyper-g prior) or numerical approximations (for
+  the hyper-g/n prior).
 }
 \author{
   Daniel Sabanes Bove

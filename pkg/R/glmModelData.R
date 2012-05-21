@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[glmModelData.R] by DSB Don 28/07/2011 11:42 (CEST)>
+## Time-stamp: <[glmModelData.R] by DSB Don 29/03/2012 19:03 (CEST)>
 ##
 ## Description:
 ## Calculate the information from the input data which is used for both
@@ -20,6 +20,8 @@
 ##              - remove dependency on glmNullModelInfo.R which is no longer
 ##              needed
 ## 28/07/2011   save lambdas.list, different interface for getRhos
+## 29/03/2012   - remove the hyperparameter a for the hyper-g prior
+##              - add the hyper-g/n prior
 #####################################################################################
 
 ##' @include getFamily.R
@@ -38,7 +40,8 @@
 ##' @param nKnots number of (quantile-based) spline knots (default: 4)
 ##' @param splineType type of splines to be used (default: \dQuote{linear}),
 ##' see \code{\link{makeBasis}} for possible types.
-##' @param a hyperparameter for the hyper-g prior (default: 4)
+##' @param gPrior hyperprior for g, either \dQuote{hyper-g/n} (default) or
+##' \dQuote{hyper-g}.
 ##' @param weights optionally a vector of positive weights (if not provided, a 
 ##' vector of ones)
 ##' @param offsets this can be used to specify an _a priori_ known component to
@@ -59,7 +62,7 @@ glmModelData <- function(y,
                          continuous=rep.int(TRUE, ncol(X)),
                          nKnots=4L,
                          splineType="linear",
-                         a=4,
+                         gPrior=c("hyper-g/n", "hyper-g"),
                          weights=rep.int(1L, length(y)),
                          offsets=rep.int(0L, length(y)),
                          family=gaussian,       
@@ -74,23 +77,22 @@ glmModelData <- function(y,
               all(! is.na(X)),
               is.logical(continuous),
               is.posInt(nKnots),
-              is.numeric(a),
               is.numeric(weights),
               all(weights >= 0),
               is.numeric(offsets))
   
     nKnots <- nKnots[1L]
-    a <- a[1L]
     
     nObs <- length(y)
     nCovs <- ncol(X)
+
+    gPrior <- match.arg(gPrior)
     
     stopifnot(identical(nObs,
                         nrow(X)),
               identical(length(continuous),
                         nCovs),
               nKnots > 1L && nKnots < nObs - 2L,
-              a > 3 && a <= 4,
               identical(nObs,
                         length(offsets)))
 
@@ -232,7 +234,7 @@ glmModelData <- function(y,
     ## return the list with the results
     return(list(nKnots=nKnots,
                 dimSplineBasis=dimSplineBasis,
-                a=a,
+                gPrior=gPrior,
                 nObs=nObs,
                 nCovs=nCovs,
                 Y=Y,

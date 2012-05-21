@@ -3,14 +3,17 @@
  *
  *  Created on: 14.03.2011
  *      Author: daniel
+ *
+ *  30/03/2012: remove hyperparameter a, instead use string for g-prior
  */
 
 #include <dataStructure.h>
 #include <string>
 #include <sstream>
 #include <sum.h>
-#include <hyp2f1.h>
 #include <getRho.h>
+#include <logBFhypergn.h>
+#include <logBFhyperg.h>
 
 #include <R_ext/BLAS.h>
 #include <R_ext/Lapack.h>
@@ -57,7 +60,7 @@ ModelData::ModelData(SEXP R_modelData) :
     nCovs(as<int>(modelData["nCovs"])),
     dimSplineBasis(as<int>(modelData["dimSplineBasis"])),
     continuous(as<LogicalVector>(modelData["continuous"])),
-    prior_a(as<double>(modelData["a"])),
+    gPriorString(as<std::string>(modelData["gPrior"])),
     degrees(as<IntVector>(modelData["degrees"])),
     nDegrees(degrees.size()),
     y(as<NumericVector>(modelData["y"])),
@@ -164,14 +167,23 @@ ModelData::getLogMargLik(const ModelPar& modPar,
             arma::colvec y_fitted = Xlin * betaOLS;
             R2 = arma::dot(y_fitted, y_fitted) / yCenterNormSq;
 
-            // compute the log marginal likelihood
-            return - (nObs - 1.0) / 2.0 * log(yCenterNormSq) -
-                    log(dimLinear + prior_a - 2.0) +
-                    log_hyp2f1((nObs - 1.0) / 2.0,
-                               1.0,
-                               (dimLinear + prior_a) / 2.0,
-                               R2);
+            // compute the log marginal likelihood:
 
+            // start with the log marginal likelihood of the null model
+            double ret = - (nObs - 1.0) / 2.0 * log(yCenterNormSq);
+
+            // and then add the log BF, depending on the hyperprior on g:
+            if(gPriorString == "hyper-g/n")
+            {
+                ret += logBFhypergn(nObs, dimLinear, R2);
+            }
+            else // gPriorString == "hyper-g"
+            {
+                ret += logBFhyperg(nObs, dimLinear, R2);
+            }
+
+            // return the result
+            return ret;
         }
         else // the most interesting case with spline-modelled covariate effects!
         {
@@ -350,14 +362,24 @@ ModelData::getLogMargLik(const ModelPar& modPar,
                 return R_NaN;
             }
 
-            // now we can compute the log marginal likelihood
-            return - (nObs - 1.0) / 2.0 * log(sst) -
-                    log(dimLinear + prior_a - 2.0) +
-                    log_hyp2f1((nObs - 1.0) / 2.0,
-                               1.0,
-                               (dimLinear + prior_a) / 2.0,
-                               R2) +
-                               0.5 * Vinv_log_det;
+            // now we can compute the log marginal likelihood:
+
+            // start with the log marginal likelihood of the null model,
+            // and the Jacobian
+            double ret = - (nObs - 1.0) / 2.0 * log(sst) + 0.5 * Vinv_log_det;
+
+            // and then add the log BF, depending on the hyperprior on g:
+            if(gPriorString == "hyper-g/n")
+            {
+                ret += logBFhypergn(nObs, dimLinear, R2);
+            }
+            else // gPriorString == "hyper-g"
+            {
+                ret += logBFhyperg(nObs, dimLinear, R2);
+            }
+
+            // return the result
+            return ret;
         }
     }
 }
@@ -382,7 +404,7 @@ GlmModelData::GlmModelData(SEXP R_modelData) :
     nCovs(as<int> (rcpp_modelData["nCovs"])),
     dimSplineBasis(as<int> (rcpp_modelData["dimSplineBasis"])),
     continuous(as<LogicalVector> (rcpp_modelData["continuous"])),
-    prior_a(as<double> (rcpp_modelData["a"])),
+    gPriorString(as<std::string> (rcpp_modelData["gPrior"])),
     degrees(as<IntVector> (rcpp_modelData["degrees"])),
     nDegrees(degrees.size()),
     y(as<NumericVector> (rcpp_modelData["Y"])),
@@ -442,7 +464,14 @@ GlmModelData::GlmModelData(SEXP R_modelData) :
     }
 
     // get the g prior object
-    gPrior = new HypergPrior(prior_a);
+    if(gPriorString == "hyper-g/n")
+    {
+        gPrior = new HypergnPrior(4.0, nObs);
+    }
+    else // gPriorString == "hyper-g"
+    {
+        gPrior = new HypergPrior(4.0);
+    }
 
     // and now to the family business:
 
@@ -508,6 +537,29 @@ GlmModelData::GlmModelData(SEXP R_modelData) :
 // *************************************************************************************
 
 // ModelPar
+
+// compute degree index vector, given a degree vector
+// note that if one element in "config" is not in "degrees",
+// then the resulting degree index will be the length of
+// "degrees", so one past the last element of "degrees"
+void
+ModelPar::compDegIndex(const IntVector& degrees)
+{
+    degIndex.clear();
+
+    for(DoubleVector::const_iterator
+            i = config.begin();
+            i != config.end();
+            ++i)
+    {
+        PosInt t = 0;
+        while((t < degrees.size()) & (static_cast<double>(degrees[t]) != *i))
+        {
+            ++t;
+        }
+        degIndex.push_back(t);
+    }
+}
 
 // return a textual description of this model configuration
 std::string

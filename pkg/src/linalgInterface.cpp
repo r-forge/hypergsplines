@@ -37,7 +37,11 @@ trs(const bool upper,
 
     const int m = R.n_rows;
     const int n = R.n_cols;
-    assert(static_cast<PosInt>(m) == L.n_rows);
+
+    if(! (static_cast<PosInt>(m) == L.n_rows))
+    {
+        throw std::domain_error("trs: m != L.n_rows");
+    }
 
     F77_CALL(dtrsm)(side,
                     uplo,
@@ -62,7 +66,11 @@ potrf(const bool upper,
 {
     const char* uplo = upper ? "U" : "L";
     const int n = A.n_rows;
-    assert(A.is_square());
+
+    if(! A.is_square())
+    {
+        throw std::domain_error("potrf: A is not square");
+    }
     int info = 0;
 
     F77_CALL(dpotrf)(uplo,
@@ -90,8 +98,17 @@ potrs(const bool upper,
 {
     const char* uplo = upper ? "U" : "L";
     const int n = L.n_rows;
-    assert(L.is_square());
-    assert(static_cast<PosInt>(n) == R.n_rows);
+
+    if(! L.is_square())
+    {
+        throw std::domain_error("potrs: L is not square");
+    }
+
+    if(! (static_cast<PosInt>(n) == R.n_rows))
+    {
+        throw std::domain_error("potrs: n != R.n_rows");
+    }
+
     const int nrhs = R.n_cols;
     int info = 0;
 
@@ -128,7 +145,12 @@ syrk(const bool upper,
     const char* uplo = upper ? "U" : "L";
     const char* trans = transpose ? "T" : "N";
     const int n = C.n_rows;
-    assert(C.is_square());
+
+    if(! C.is_square())
+    {
+        throw std::domain_error("syrk: C is not square");
+    }
+
     const int k = transpose ? A.n_rows : A.n_cols;
     const int lda = transpose ? k : n;
 
