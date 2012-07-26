@@ -1,3 +1,19 @@
+2012-06-18  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* src: R2 must not be larger than 1. Moreover, allow different
+	models to have the same log posterior value. Before this was not
+	possible and only one of those models could be returned to the
+	user! 
+
+2012-06-15  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* correct criteria for non-identifiability of models
+
+2012-05-31  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* src/dataStructure.cpp: catch overidentified models in the log
+	marginal likelihood computation and return NaN
+
 2012-05-11  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
 
 	* R/helpers.R: new "expWithConst" helper function which will avoid

@@ -521,7 +521,7 @@ private:
     };
 
     // the set type of ordered map iterators
-    typedef std::set<MapType::iterator, Compare_map_iterators> SetType;
+    typedef std::multiset<MapType::iterator, Compare_map_iterators> SetType;
 
     // and finally the data members
     const MapType::size_type maxSize;

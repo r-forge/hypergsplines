@@ -15,6 +15,8 @@
 using namespace Rcpp;
 
 
+// 18/06/2012   R2 = 1 is not a problem, but numerical R2 > 1 is a problem.
+//              Therefore take the minimum of 1 for R2.
 SEXP cpp_calculateModel(SEXP R_config,
                         SEXP R_modelData)
 {
@@ -159,6 +161,9 @@ SEXP cpp_calculateModel(SEXP R_config,
 
         coefR2 = arma::as_scalar(arma::sum(arma::square(olsFit - meanY))) /
                 arma::as_scalar(arma::sum(arma::square(y - meanY)));
+
+        // R2 must not be larger than 1
+        coefR2 = std::min(coefR2, 1.0);
     }
 
     // return the list with necessary info

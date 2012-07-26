@@ -130,6 +130,8 @@ info_null_HG(double g,
 }
 
 
+// 15/6/12: use warnings instead of prints
+// 18/6/12: if status != 1, return NaN and not NA
 double
 LogBF_Hg_null(double R2,
               int n,
@@ -181,11 +183,11 @@ LogBF_Hg_null(double R2,
     if (status != 1.)
     {
         if (status == 0.)
-            Rprintf("\n No positive roots\n");
+            Rf_warning("\n No positive roots\n");
         else
-            Rprintf("\n More than one positive root\n");
+            Rf_warning("\n More than one positive root\n");
 
-        return R_NaReal;
+        return R_NaN;
     }
     else
     {

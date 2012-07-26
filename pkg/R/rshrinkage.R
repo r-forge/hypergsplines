@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanes Bove [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ## 
-## Time-stamp: <[rshrinkage.R] by DSB Fre 30/03/2012 15:17 (CEST)>
+## Time-stamp: <[rshrinkage.R] by DSB Mon 18/06/2012 11:14 (CEST)>
 ##
 ## Description:
 ## Sample from the model-specific posterior of the shrinkage factor
@@ -39,7 +39,7 @@ rshrinkage <- function(n,
                        modelData)
 {
     ## extract contents
-    R2 <- marginal$coefR2
+    R2 <- min(marginal$coefR2, 1)
     nObs <- modelData$nObs
     p <- marginal$dim.lin
     alpha <- 4

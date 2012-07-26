@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[logBFhypergn.R] by DSB Fre 30/03/2012 16:04 (CEST)>
+## Time-stamp: <[logBFhypergn.R] by DSB Fre 15/06/2012 17:07 (CEST)>
 ##
 ## Description:
 ## Internal function which computes the log Bayes Factor against
@@ -11,6 +11,7 @@
 ##
 ## History:
 ## 30/03/2012   file creation
+## 15/06/2012   check size of model
 #####################################################################################
 
 ##' Compute the log Bayes Factor against the null model under hyper-g/n prior.
@@ -25,6 +26,13 @@
 ##' @author Daniel Sabanes Bove \email{daniel.sabanesbove@@ifspm.uzh.ch}
 logBFhypergn <- function(n, p, R2)
 {
+    ## checks
+    if((p + 1 >= n) | (R2 >= 1))
+    {
+        ## then p + 1 >= n or R2 >= 1, so the model is too large
+        return(NA_real_)
+    }
+    
     ## convenient:
     oneMinusR2inv <- 1 / (1 - R2)
 

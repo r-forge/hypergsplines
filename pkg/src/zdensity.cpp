@@ -254,7 +254,7 @@ NegLogUnnormZDens::operator()(double z)
 
     }
     // catch errors in IWLS and non-finite result
-    catch (std::domain_error error)
+    catch (std::domain_error& error)
     {
         if(verbose)
         {
@@ -315,7 +315,7 @@ glmGetLogMargLik(const ModelPar& modPar,
                                                                   zVar,
                                                                   computation);
         }
-        catch (std::domain_error error)
+        catch (std::domain_error& error)
         {
             if(computation.debug)
             {
@@ -380,7 +380,7 @@ ZdensApprox::ZdensApprox(const ModelPar& modPar,
             linApproxDens = LinApproxDens(zVals,
                                           logDensVals);
         }
-        catch (std::domain_error error)
+        catch (std::domain_error& error)
         {
             Rf_error("\nZdensApprox: Marginal z density approximation could not be constructed, because\n%s",
                      error.what());

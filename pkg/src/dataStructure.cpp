@@ -104,6 +104,9 @@ ModelData::ModelData(SEXP R_modelData) :
     }
 }
 
+
+
+// 15/6/2012: correct criterion for non-identifiability
 // compute the log marginal likelihood (and as a byproduct the R2)
 // of a specific model
 double
@@ -138,6 +141,21 @@ ModelData::getLogMargLik(const ModelPar& modPar,
     const int dimSpline = whichSpline.size();
     const bool hasOnlyLinear = (dimSpline == 0);
 
+    // return NaN if the number of covariates + intercept is not smaller than the number of observations
+    // (because the arma::solve below could still work in that case...)
+    // Note that in the border case of dimLinear + 1 = nObs we have R2 = 1 and then
+    // the log marginal likelihood is not finite.
+    if(dimLinear + 1 >= nObs)
+    {
+        // if(verbose)
+        // {
+        //      Rprintf("getLogMargLik: p > n for model:\n%s",
+        //              modPar.print().c_str());
+        // }
+
+        return R_NaN;
+    }
+
     // first the easy null model case
     if(isNullModel)
     {
@@ -162,10 +180,29 @@ ModelData::getLogMargLik(const ModelPar& modPar,
 
         if(hasOnlyLinear)
         {
-            // compute the OLS solution and get the coefficient of determination (R^2):
-            arma::colvec betaOLS = arma::solve(Xlin, y);
+            // protect against errors in the betaOLS computation, coming from
+            // collinear columns in Xlin, e.g.
+            arma::colvec betaOLS;
+            try
+            {
+                // compute the OLS solution and get the coefficient of determination (R^2):
+                betaOLS = arma::solve(Xlin, y);
+            }
+            catch (std::runtime_error& error)
+            {
+//                if(verbose)
+//                {
+//                    Rprintf("getLogMargLik: betaOLS could not be computed for model:\n%s",
+//                            modPar.print().c_str());
+//                }
+
+                return R_NaN;
+            }
             arma::colvec y_fitted = Xlin * betaOLS;
             R2 = arma::dot(y_fitted, y_fitted) / yCenterNormSq;
+
+            // R2 must not be larger than 1
+            R2 = std::min(R2, 1.0);
 
             // compute the log marginal likelihood:
 
@@ -346,6 +383,9 @@ ModelData::getLogMargLik(const ModelPar& modPar,
 
             // so we have the R2:
             R2 = ssm / sst;
+
+            // R2 must not be larger than 1
+            R2 = std::min(R2, 1.0);
 
             // for the marginal likelihood, we need the determinant of Vinv.
             // luckily, we can compute that as
@@ -777,7 +817,7 @@ ModelInfo::convert2list(long double logNormConst) const
 // already inside, or the model was not good enough)
 bool
 ModelCache::insert(const ModelPar& par,
-                   const ModelInfo& info)
+                      const ModelInfo& info)
 {
     // first check size of cache
     if(isFull())

@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[calculateModel.R] by DSB Don 25/08/2011 17:43 (CEST)>
+## Time-stamp: <[calculateModel.R] by DSB Fre 15/06/2012 17:05 (CEST)>
 ##
 ## Description:
 ## For one specific model configuration, do the marginalization over the
@@ -21,6 +21,9 @@
 ##              Include here only the C++ version. The old R version can be
 ##              found in the archive packages.
 ## 26/07/2011   allow for non-integer vector config
+## 15/06/2012   throw error message if model is not identifiable, i.e., if the
+##              number of included covariates plus intercept is not smaller than
+##              the number of observations 
 #####################################################################################
 
 ##' @include modelData.R
@@ -45,7 +48,8 @@ calculateModel <- function(config,
     config <- as.double(config)
     
     ## checks:
-    stopifnot(identical(length(config), modelData$nCovs))
+    stopifnot(identical(length(config), modelData$nCovs),
+              sum(config > 0) + 1 < modelData$nObs)
 
     ## then directly go C++
     ret <- .Call("cpp_calculateModel",
