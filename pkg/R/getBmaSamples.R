@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[getBmaSamples.R] by DSB Fre 11/05/2012 12:24 (CEST)>
+## Time-stamp: <[getBmaSamples.R] by DSB Mon 26/08/2013 15:30 (CEST)>
 ##
 ## Description:
 ## Get posterior samples from the Bayesian Model Average (BMA).
@@ -127,44 +127,47 @@ getBmaSamples <- function(config,
                            nbins=nModels)
 
     ## progress bar setup:
-    nBars <- 20L
-    steps <- floor(seq(from=0, to=100, length=nBars + 1L))[- 1L]
-
-    lastWasTwoDigits <- FALSE
-    for(k in seq_len(nBars))
+    if(computation$verbose)
     {
-        if(k %% 5L == 0L)
+        nBars <- 20L
+        steps <- floor(seq(from=0, to=100, length=nBars + 1L))[- 1L]
+
+        lastWasTwoDigits <- FALSE
+        for(k in seq_len(nBars))
         {
-            cat(steps[k])
-            
-            if(steps[k] >= 10)
-                lastWasTwoDigits <- TRUE
+            if(k %% 5L == 0L)
+            {
+                cat(steps[k])
+                
+                if(steps[k] >= 10)
+                    lastWasTwoDigits <- TRUE
+            }
+            else
+            {
+                if(lastWasTwoDigits)
+                    lastWasTwoDigits <- FALSE
+                else
+                    cat("-")
+            }
         }
-        else
+        cat("\n")
+        
+        for(k in seq_len(nBars))
         {
-            if(lastWasTwoDigits)
-                lastWasTwoDigits <- FALSE
+            if(k %% 5L == 0L)
+                cat("|")
             else
                 cat("-")
         }
-    }
-    cat("\n")
-    
-    for(k in seq_len(nBars))
-    {
-        if(k %% 5L == 0L)
-            cat("|")
-        else
-            cat("-")
-    }
-    cat("\n")
+        cat("\n")
 
-    barInterval <- floor(nSamples / nBars)
+        barInterval <- floor(nSamples / nBars)
 
-    
+        oldIntervalCount <- 0L
+    }
+
     ## initialize samples counters:
     count <- 0L
-    oldIntervalCount <- 0L
     
     ## start sampling:
     for(i in which(modelFreqs > 0L))
@@ -245,14 +248,17 @@ getBmaSamples <- function(config,
             }
         }
 
-        ## echo progress of sampling
-        newIntervalCount <- floor(count / barInterval)
-        if((countDiff <- newIntervalCount - oldIntervalCount) > 0L)
+        if(computation$verbose)
         {
-            cat(rep.int("=", countDiff),
-                sep="")
+            ## echo progress of sampling
+            newIntervalCount <- floor(count / barInterval)
+            if((countDiff <- newIntervalCount - oldIntervalCount) > 0L)
+            {
+                cat(rep.int("=", countDiff),
+                    sep="")
+            }
+            oldIntervalCount <- newIntervalCount
         }
-        oldIntervalCount <- newIntervalCount
     }
     cat("\n")
 

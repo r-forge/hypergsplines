@@ -56,8 +56,8 @@ logIntegral(Fun& negLogFun,
 
     // then compute the Gauss-Hermite quadrature, using the supplied standard nodes and
     // weights from R
-    DoubleVector nodes;
-    DoubleVector logWeights;
+    MyDoubleVector nodes;
+    MyDoubleVector logWeights;
 
     // get the nodes and log weights for this mode and variance:
     computation.gaussHermite.getNodesAndLogWeights(zMode, zVar, nodes, logWeights);
@@ -66,8 +66,8 @@ logIntegral(Fun& negLogFun,
     SafeSum logContributions;
 
     // compute them now
-    DoubleVector::const_iterator n = nodes.begin();
-    for(DoubleVector::const_iterator
+    MyDoubleVector::const_iterator n = nodes.begin();
+    for(MyDoubleVector::const_iterator
             w = logWeights.begin();
             w != logWeights.end();
             ++w, ++n)

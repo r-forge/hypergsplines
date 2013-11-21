@@ -28,18 +28,18 @@ public:
     // compute nodes and log weights for given mode and sd of target unnormalized density
     void
     getNodesAndLogWeights(double mode, double var,
-                          DoubleVector& nodes, DoubleVector& logWeights) const; // output
+                          MyDoubleVector& nodes, MyDoubleVector& logWeights) const; // output
 
     // constructor
     GaussHermite(Rcpp::List rcpp_gaussHermite) :
-        tVec(Rcpp::as<DoubleVector>(rcpp_gaussHermite["nodes"])),
-        wVec(Rcpp::as<DoubleVector>(rcpp_gaussHermite["weights"]))
+        tVec(Rcpp::as<MyDoubleVector>(rcpp_gaussHermite["nodes"])),
+        wVec(Rcpp::as<MyDoubleVector>(rcpp_gaussHermite["weights"]))
         {
         }
 
 private:
-    const DoubleVector tVec; // nodes
-    const DoubleVector wVec; // weights (not log!)
+    const MyDoubleVector tVec; // nodes
+    const MyDoubleVector wVec; // weights (not log!)
 };
 
 // Computation: capture all computation options
@@ -156,7 +156,7 @@ struct IwlsResults
 struct ModelPar
 {
     // for each covariate we have the degree of freedom in here:
-    DoubleVector config;
+    MyDoubleVector config;
 
     // and we also have the degree indices in here
     IntVector degIndex;
@@ -174,13 +174,13 @@ struct ModelPar
 
     // copy integer degrees of freedom configuration
     ModelPar(const Rcpp::IntegerVector& config) :
-        config(Rcpp::as<DoubleVector>(config))
+        config(Rcpp::as<MyDoubleVector>(config))
     {
     }
 
     // copy double degrees of freedom configuration
     ModelPar(const Rcpp::NumericVector& config) :
-        config(Rcpp::as<DoubleVector>(config))
+        config(Rcpp::as<MyDoubleVector>(config))
     {
     }
 
@@ -263,6 +263,7 @@ private:
 // ModelData class!
 
 // 19/5/2011:  save also the names of link and distribution
+// 20/9/2012: remove gPriorString because it is no longer necessary
 class GlmModelData
 {
 public:
@@ -285,8 +286,6 @@ public:
     const int dimSplineBasis;
 
     const Rcpp::LogicalVector continuous;
-
-    const std::string gPriorString;
 
     // the vector of degrees. assumed to be sorted increasingly,
     // starting with 0, 1 and continuing with the "spline" degrees.

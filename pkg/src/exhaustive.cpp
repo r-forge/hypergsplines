@@ -11,6 +11,8 @@
 #include <backsolve.h>
 #include <vector>
 #include <string>
+#include <types.h>
+#include <sum.h>
 
 #include <dataStructure.h>
 #include <logBFhypergn.h>
@@ -18,8 +20,11 @@
 
 using namespace Rcpp;
 
+// 31/01/2013: add R_modelPrior option. Inclusion probabilities are computed in R.
+
 SEXP
 cpp_exhaustive(SEXP R_modelData,
+               SEXP R_modelPrior,
                SEXP R_modelConfigs)
 {
     // convert and extract the modelData object:
@@ -42,13 +47,24 @@ cpp_exhaustive(SEXP R_modelData,
     arma::colvec meanY_orig(nObs);
     meanY_orig.fill(arma::mean(y_orig));
 
+    // the prior on the model space:
+    ModelPrior modelPrior(R_modelPrior,
+                          as<int>(modelData["nCovs"]),
+                          as<IntVector>(modelData["degrees"]).size(),
+                          as<LogicalVector>(modelData["continuous"]));
+
     // convert and extract the model configs:
     IntegerMatrix modelConfigs(R_modelConfigs);
     const int nModels(modelConfigs.nrow());
 
     // setup containers for results
-    std::vector<double> R2;
-    std::vector<double> logMargLik;
+    MyDoubleVector R2;
+    MyDoubleVector logMargLik;MyDoubleVector logPrior;
+    MyDoubleVector logPost;
+
+    // this is needed for computing the normalising constant
+    // of the posterior probabilities:
+    SafeSum vec;
 
     // progress bar setup:
     StatusBar statusBar(true, 20, 5, nModels);
@@ -60,11 +76,15 @@ cpp_exhaustive(SEXP R_modelData,
         R_CheckUserInterrupt();
 
         // get this model config
-        IntegerMatrix::Row config = modelConfigs.row(i_mod);
+        // IntegerMatrix::Row config = modelConfigs.row(i_mod);
+        IntegerVector config = modelConfigs.row(i_mod);
+
+        // translate config into ModelPar
+        ModelPar modelPar(config);
 
         // translate config into linear and splines part
-        std::vector<int> whichLinear;
-        std::vector<int> whichSpline;
+        IntVector whichLinear;
+        IntVector whichSpline;
 
         for(int i_cov = 0; i_cov < nCovs; ++i_cov)
         {
@@ -195,9 +215,35 @@ cpp_exhaustive(SEXP R_modelData,
 
         // save the log marginal likelihood
         logMargLik.push_back(thisLogMargLik);
+
+        // and the log prior
+        double lp = modelPrior.getLogPrior(modelPar);
+        logPrior.push_back(lp);
+
+        // so the unnormalised log posterior is
+        double ulp = thisLogMargLik + lp;
+        logPost.push_back(ulp);
+        // add that to the SafeSum
+        vec.add(ulp);
+
     }
+
+    // log normalising constant for the posterior probs:
+    double logNormConst = vec.logSumExp();
+
+    // so we overwrite the unnormalised log posterior values
+    // with the normalised posterior values:
+    for(MyDoubleVector::iterator i = logPost.begin();
+            i != logPost.end();
+            ++i)
+    {
+        *i = exp(*i - logNormConst);
+    }
+
 
     // return the results
     return DataFrame::create(_["R2"] = R2,
-                             _["logMargLik"] = logMargLik);
+                             _["logMargLik"] = logMargLik,
+                             _["logPrior"] = logPrior,
+                             _["post"] = logPost);
 }

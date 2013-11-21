@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[glmModelData.R] by DSB Don 29/03/2012 19:03 (CEST)>
+## Time-stamp: <[glmModelData.R] by DSB Don 20/09/2012 16:30 (CEST)>
 ##
 ## Description:
 ## Calculate the information from the input data which is used for both
@@ -22,13 +22,16 @@
 ## 28/07/2011   save lambdas.list, different interface for getRhos
 ## 29/03/2012   - remove the hyperparameter a for the hyper-g prior
 ##              - add the hyper-g/n prior
+## 20/09/2012   move to class-based handling of hyperprior on g
 #####################################################################################
 
 ##' @include getFamily.R
 ##' @include makeBasis.R
 ##' @include getRhos.R
 ##' @include helpers.R
+##' @include GPrior-classes.R
 {}
+
 
 ##' Process the data needed for modelling
 ##'
@@ -40,8 +43,10 @@
 ##' @param nKnots number of (quantile-based) spline knots (default: 4)
 ##' @param splineType type of splines to be used (default: \dQuote{linear}),
 ##' see \code{\link{makeBasis}} for possible types.
-##' @param gPrior hyperprior for g, either \dQuote{hyper-g/n} (default) or
-##' \dQuote{hyper-g}.
+##' @param gPrior A g-prior class object. Defaults to a hyper-g/n prior. See
+##' \code{\linkS4class{GPrior}} for more information. Deprecated but still
+##' possible for backwards-compatibility is the use of the strings
+##' \dQuote{hyper-g/n} or \dQuote{hyper-g}.
 ##' @param weights optionally a vector of positive weights (if not provided, a 
 ##' vector of ones)
 ##' @param offsets this can be used to specify an _a priori_ known component to
@@ -62,7 +67,7 @@ glmModelData <- function(y,
                          continuous=rep.int(TRUE, ncol(X)),
                          nKnots=4L,
                          splineType="linear",
-                         gPrior=c("hyper-g/n", "hyper-g"),
+                         gPrior=HypergnPrior(a=4, n=length(y)),
                          weights=rep.int(1L, length(y)),
                          offsets=rep.int(0L, length(y)),
                          family=gaussian,       
@@ -80,14 +85,25 @@ glmModelData <- function(y,
               is.numeric(weights),
               all(weights >= 0),
               is.numeric(offsets))
+
+    if(is(gPrior, "character"))
+    {
+        gPrior <- match.arg(gPrior,
+                            choices=c("hyper-g/n", "hyper-g"))
+        gPrior <-
+            if(gPrior == "hyper-g/n")
+                HypergnPrior(a=4, n=length(y))
+            else
+                HypergPrior(a=4)
+    } else {
+        stopifnot(is(gPrior, "GPrior"))
+    }
   
     nKnots <- nKnots[1L]
     
     nObs <- length(y)
     nCovs <- ncol(X)
 
-    gPrior <- match.arg(gPrior)
-    
     stopifnot(identical(nObs,
                         nrow(X)),
               identical(length(continuous),

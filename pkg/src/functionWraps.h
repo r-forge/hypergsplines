@@ -74,14 +74,14 @@ public:
     save(double arg, double val);
 
     // extract the arguments
-    DoubleVector
+    MyDoubleVector
     getArgs() const
     {
         return args;
     }
 
     // extract the function values
-    DoubleVector
+    MyDoubleVector
     getVals() const
     {
         return vals;
@@ -106,8 +106,8 @@ public:
     convert2list() const;
 
 private:
-    DoubleVector args;
-    DoubleVector vals;
+    MyDoubleVector args;
+    MyDoubleVector vals;
 };
 
 // ***************************************************************************************************//

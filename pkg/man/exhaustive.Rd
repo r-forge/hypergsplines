@@ -2,14 +2,20 @@
 \alias{exhaustive}
 \title{Evaluate all possible models}
 \usage{
-  exhaustive(modelData, modelConfigs = NULL,
-    algorithm = c("2", "1"),
-    computation = getComputation())
+  exhaustive(modelData,
+    modelPrior = c("flat", "exponential", "independent", "dependent", "dep.linear"),
+    modelConfigs = NULL, algorithm = c("2", "1"),
+    computation = getComputation(), order = FALSE)
 }
 \arguments{
   \item{modelData}{the data necessary for model estimation,
   which is the result from \code{\link{modelData}} or
   \code{\link{glmModelData}}}
+
+  \item{modelPrior}{either \dQuote{flat} (default),
+  \dQuote{exponential}, \dQuote{independent},
+  \dQuote{dependent}, or \dQuote{dep.linear}, see
+  \code{\link{getLogModelPrior}} for details.}
 
   \item{modelConfigs}{optional matrix of model
   configurations, which are then evaluated instead of all
@@ -25,10 +31,16 @@
   \item{computation}{computation options produced by
   \code{\link{getComputation}}, only matters for
   generalised response models.}
+
+  \item{order}{should the models be ordered after their
+  posterior probability? (default: \code{FALSE} for
+  backwards compatibility)}
 }
 \value{
-  a data frame with model specifications and marginal
-  likelihood values
+  a list with the data frame \dQuote{models} comprising the
+  model configurations, (R2 for normal models) / log
+  marginal likelihoods / log priors / posteriors; and the
+  inclusion probabilities matrix \dQuote{inclusionProbs}.
 }
 \description{
   Evaluate all possible models
@@ -74,24 +86,12 @@ md <- glmModelData(y=as.numeric(Employed > 64),
 
 ## and do the exhaustive search
 res <- exhaustive(md,
+                  modelPrior="dependent",
                   computation=
                   getComputation(higherOrderCorrection=FALSE,
                                  debug=FALSE))
-res$logPrior <-
-    getLogModelPrior(config=res[, 1:2],
-                     type="dependent",
-                     modelData=md)
 
-resIncProbs <-
-    getInclusionProbs(models=res,
-                      modelData=md)
-
-res$unLogPost <- res$logMargLik + res$logPrior
-res$post <- exp(res$unLogPost - min(res$unLogPost[is.finite(res$unLogPost)]))
-res$post <- res$post / sum(res$post)
-
-res <- res[order(res$unLogPost, decreasing=TRUE), ]
-
+res$models <- res$models[order(res$models$post, decreasing=TRUE), ]
 res
 
 res1 <- exhaustive(md,

@@ -4,7 +4,7 @@
 \usage{
   glmModelData(y, X, continuous = rep.int(TRUE, ncol(X)),
     nKnots = 4L, splineType = "linear",
-    gPrior = c("hyper-g/n", "hyper-g"),
+    gPrior = HypergnPrior(a = 4, n = length(y)),
     weights = rep.int(1L, length(y)),
     offsets = rep.int(0L, length(y)), family = gaussian,
     phi = 1)
@@ -26,8 +26,11 @@
   \dQuote{linear}), see \code{\link{makeBasis}} for
   possible types.}
 
-  \item{gPrior}{hyperprior for g, either \dQuote{hyper-g/n}
-  (default) or \dQuote{hyper-g}.}
+  \item{gPrior}{A g-prior class object. Defaults to a
+  hyper-g/n prior. See \code{\linkS4class{GPrior}} for more
+  information. Deprecated but still possible for
+  backwards-compatibility is the use of the strings
+  \dQuote{hyper-g/n} or \dQuote{hyper-g}.}
 
   \item{weights}{optionally a vector of positive weights
   (if not provided, a vector of ones)}

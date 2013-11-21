@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[exhaustive.R] by DSB Don 10/05/2012 18:32 (CEST)>
+## Time-stamp: <[exhaustive.R] by DSB Mon 04/02/2013 10:48 (CET)>
 ##
 ## Description:
 ## Implement the first function in this package. This evaluates all possible
@@ -24,6 +24,11 @@
 ## 29/06/2011   Catch errors in expand.grid, which stem from too large model
 ##              spaces.
 ## 10/05/2012   use new helper function "checkModelConfigs"
+## 31/01/2013   include option "modelPrior" to ease application of the
+##              exhaustive model evaluation. Result is therefore now new a list
+##              instead of just a data frame.
+## 04/02/2013   add option "order" which optionally orders
+##              the models after their posterior probability
 #####################################################################################
 
 ##' @include modelData.R
@@ -35,6 +40,9 @@
 ##' 
 ##' @param modelData the data necessary for model estimation, which is the
 ##' result from \code{\link{modelData}} or \code{\link{glmModelData}}
+##' @param modelPrior either \dQuote{flat} (default), \dQuote{exponential},
+##' \dQuote{independent}, \dQuote{dependent}, or \dQuote{dep.linear}, see
+##' \code{\link{getLogModelPrior}} for details. 
 ##' @param modelConfigs optional matrix of model configurations, which are then
 ##' evaluated instead of all possible configurations. It is check for coherency
 ##' with \code{modelData}.
@@ -44,8 +52,12 @@
 ##' always a type 2 algorithm is used.
 ##' @param computation computation options produced by
 ##' \code{\link{getComputation}}, only matters for generalised response models. 
-##' @return a data frame with model specifications and marginal likelihood
-##' values
+##' @param order should the models be ordered after their posterior
+##' probability? (default: \code{FALSE} for backwards compatibility)
+##' @return a list with the data frame \dQuote{models} comprising the model
+##' configurations, (R2 for normal models) / log marginal likelihoods / log
+##' priors / posteriors; and the inclusion probabilities matrix
+##' \dQuote{inclusionProbs}.
 ##'
 ##' @example examples/exhaustive.R
 ##' 
@@ -53,10 +65,19 @@
 ##' @keywords regression
 ##' @author Daniel Sabanes Bove \email{daniel.sabanesbove@@ifspm.uzh.ch}
 exhaustive <- function(modelData,
+                       modelPrior=
+                        c("flat",
+                          "exponential",
+                          "independent",
+                          "dependent",
+                          "dep.linear"),
                        modelConfigs=NULL,
                        algorithm=c("2", "1"),
-                       computation=getComputation())
+                       computation=getComputation(),
+                       order=FALSE)
 {
+    modelPrior <- match.arg(modelPrior)
+    
     ## check if modelConfigs is provided
     if(is.null(modelConfigs))
     {
@@ -113,22 +134,40 @@ exhaustive <- function(modelData,
             if(algorithm == 1L)
                 .Call("cpp_exhaustive", ## slow for large n
                       modelData,
+                      modelPrior,
                       modelConfigs)
             else ## if(algorithm == 2L)
                 .Call("cpp_exhaustive2", ## slow for large p * dimSplineBasis
                       modelData,
+                      modelPrior,
                       modelConfigs)    
         }
         else
         {
             .Call("cpp_glmExhaustive",
                   modelData,
+                  modelPrior,
                   modelConfigs,
                   computation)
         }
-        
-    ## return the model configurations along with the results
-    return(cbind(modelConfigs,
-                 ret))
+
+    ## merge the model configurations with the results
+    models <- cbind(modelConfigs,
+                    ret)
+
+    ## optional ordering
+    if(isTRUE(order))
+    {
+        models <- models[order(models$post,
+                               decreasing=TRUE), ]
+    }
+    
+    ## compute the inclusion probabilities
+    inclusionProbs <- getInclusionProbs(models=models,
+                                        modelData=modelData)
+
+    ## return both in a list
+    return(list(models=models,
+                inclusionProbs=inclusionProbs))
 }
 

@@ -7,7 +7,7 @@ md <- modelData(y=Employed,
                 gPrior="hyper-g/n")
 
 ## get models table
-tab <- exhaustive(modelData=md)
+tab <- exhaustive(modelData=md)$models
 tab
 
 ## get posterior samples from the BMA assuming
@@ -31,7 +31,7 @@ md <- glmModelData(y=as.numeric(Employed > 64),
 ## get models table
 tab <- exhaustive(modelData=md,
                   computation=
-                  getComputation(higherOrderCorrection=FALSE))
+                  getComputation(higherOrderCorrection=FALSE))$models
 
 ## get posterior samples from the BMA assuming
 ## a flat model prior

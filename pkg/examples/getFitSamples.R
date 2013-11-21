@@ -18,7 +18,7 @@ res <- getFitSamples(X=X,
 str(res)
 
 ## this must also work for BMA samples:
-tab <- exhaustive(modelData=md)
+tab <- exhaustive(modelData=md)$models
 samples <- getBmaSamples(config=tab,
                          logPostProbs=tab$logMargLik,
                          nSamples=1000L,

@@ -1,9 +1,58 @@
+2013-11-21  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* Fix for R version 3.0
+
+2013-08-26  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* R/survModelData.R: Warn if input survival data are reordered
+
+	* Respect the verbose option inside the computation argument for
+	"getBmaSamples" und "stochSearch".
+
+2013-08-05  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* R/plotCurveEstimate.R: Introduce "plot" argument for
+	plotCurveEstimate, and invisibly return the required values
+	for plotting.
+
+2013-02-04  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* R/exhaustive.R: Include the option "order"
+
+2013-01-31  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* R/exhaustive.R: Include the option "modelPrior" for the
+	exhaustive model space evaluation. The result of the function
+	"exhaustive" is therefore now a list instead of just a data frame.
+
+2012-12-06  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* Correct Poisson model approximation of the proportional hazards
+	survival models.
+
+2012-09-20  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* Move to class-based handling of hyperpriors on g for
+	non-Gaussian models. For Gaussian models there are no changes.
+
+2012-08-28  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* R/survOffsets.R: do not require ordered survival times
+
+	* R/options.R: add todo info to getSearch.
+
+	* inst/CITATION: Update technical report data.
+
+2012-08-27  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
+
+	* Start incorporation of survival models.
+
 2012-06-18  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
 
 	* src: R2 must not be larger than 1. Moreover, allow different
 	models to have the same log posterior value. Before this was not
 	possible and only one of those models could be returned to the
-	user! 
+	user!
 
 2012-06-15  Daniel Sabanés Bové  <daniel.sabanesbove@ifspm.uzh.ch>
 

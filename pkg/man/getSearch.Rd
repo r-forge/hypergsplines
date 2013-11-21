@@ -1,6 +1,6 @@
 \name{getSearch}
 \alias{getSearch}
-\title{Collect the search options}
+\title{Collect the search options, todo: really use this in the package!}
 \usage{
   getSearch(nModels = as.integer(max(1L, floor(nCache/100))),
     nCache = 1000000000L, chainlength = 10000L)
@@ -16,7 +16,8 @@
   \item{chainlength}{length of the model sampling chain}
 }
 \description{
-  Collect the search options
+  Collect the search options, todo: really use this in the
+  package!
 }
 \author{
   Daniel Sabanes Bove

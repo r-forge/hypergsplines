@@ -2,17 +2,17 @@ citHeader(paste("Please cite the R-package 'hypergsplines' in publications",
                 "as follows when you use it:")) 	  
 
 citEntry(entry="TechReport",
-	 title="Hyper-g priors for generalised additive model selection with penalised splines", 
+	 title="Mixtures of g-priors for generalised additive model selection with penalised splines", 
 	 author=
          personList(person(first="Daniel", last="Sabanes Bove", 
                            email="daniel.sabanesbove@ifspm.uzh.ch"),
                     person(first="Leonhard", last="Held"),
                     person(first="Goeran", last="Kauermann")),
-         institution="University of Zurich and University Bielefeld",
+         institution="University of Zurich and Ludwig-Maximilians-University Munich",
 	 year=2011,
 	 url="http://arxiv.org/abs/1108.3520",
-	 textVersion=paste("Sabanes Bove, D., Held, L. and Kauermann, G. (2011):",
-	                   "Hyper-g priors for generalised additive model selection with penalised splines.", 
+	 textVersion=paste("Sabanes Bove, D., Held, L. and Kauermann, G. (2012):",
+	                   "Mixtures of g-priors for generalised additive model selection with penalised splines.", 
 			   "Technical report.",
 	 	    	   "URL: http://arxiv.org/abs/1108.3520")) 
 

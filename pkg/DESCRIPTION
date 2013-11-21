@@ -1,6 +1,7 @@
 Package: hypergsplines
 Imports:
     appell,
+    methods,
     Runuran,
     splines,
     statmod
@@ -18,14 +19,15 @@ Description: This R-package implements Bayesian model
     for the parameters in the normal additive and the
     generalised additive model.
 SystemRequirements: GNU make
-Version: 0.0-32
-Date: 2012-06-18
+Version: 0.0-40
+Date: 2013-11-21
 Depends:
     R (>= 2.12.0),
     Rcpp (>= 0.8.8),
     RcppArmadillo (>= 0.2.9)
 Suggests:
-    MASS
+    MASS,
+    survival
 Collate:
     'aggregateModelsTable.R'
     'getRhos.R'
@@ -44,6 +46,7 @@ Collate:
     'getFitSamples.R'
     'getInclusionProbs.R'
     'getLogModelPrior.R'
+    'GPrior-classes.R'
     'glmModelData.R'
     'glmGetSamples.R'
     'hpds.R'
@@ -54,3 +57,5 @@ Collate:
     'postOptimize.R'
     'stochSearch.R'
     'logBFhypergn.R'
+    'getQmatrix.R'
+    'survModelData.R'

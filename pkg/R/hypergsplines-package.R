@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[hypergsplines-package.R] by DSB Don 29/03/2012 19:04 (CEST)>
+## Time-stamp: <[hypergsplines-package.R] by DSB Don 06/12/2012 12:14 (CET)>
 ##
 ## Description:
 ## Package description.
@@ -22,6 +22,8 @@
 ## 04/08/2011   add cpp_aggregateModelsTable
 ## 28/03/2012   add cpp_logMargLikHypergn
 ## 29/03/2012   hyper-g priors, not only one and the hyper-g prior
+## 20/09/2012   add imports from methods package
+## 06/12/2012   also import "is" from methods package
 #####################################################################################
 
 ##' Bayesian model selection with penalized splines and hyper-g priors
@@ -39,6 +41,8 @@
 ##' cpp_glmExhaustive cpp_glmGetSamples cpp_linApproxDens cpp_glmStochSearch
 ##' cpp_log_hyp2f1_laplace cpp_logMargLik cpp_glmLogMargLik
 ##' cpp_aggregateModelsTable cpp_logMargLikHypergn
+##' @importFrom methods setClass setOldClass setGeneric setMethod representation
+##' signature prototype initialize new is
 ##' 
 ##' @author Daniel Sabanes Bove \email{daniel.sabanesbove@@ifspm.uzh.ch}
 ##' @keywords package regression

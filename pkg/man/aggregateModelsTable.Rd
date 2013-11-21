@@ -38,11 +38,8 @@ md <- modelData(y=Employed,
                 X=cbind(GNP, Armed.Forces))
 
 ## get a list of all possible models with this data
-exRes <- exhaustive(md)
+exRes <- exhaustive(md)$models
 exRes
-
-## add post prob
-exRes$post <- exp(exRes$logMargLik) / sum(exp(exRes$logMargLik))
 
 ## get meta-model table
 aggRes <- aggregateModelsTable(modelsTable=exRes[, 1:2],

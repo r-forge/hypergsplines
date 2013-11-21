@@ -67,7 +67,7 @@ cpp_glmStochSearch(SEXP R_modelData,
     ModelMcmc now(old);
 
     // progress bar setup
-    StatusBar statusBar(true, 20, 5, chainlength);
+    StatusBar statusBar(computation.verbose, 20, 5, chainlength);
 
     // Start MCMC sampler***********************************************************//
 

@@ -29,14 +29,14 @@ using namespace Rcpp;
 void
 GaussHermite::getNodesAndLogWeights(double mode,
                                     double var,
-                                    DoubleVector& nodes,
-                                    DoubleVector& logWeights) const
+                                    MyDoubleVector& nodes,
+                                    MyDoubleVector& logWeights) const
 {
     // logarithm of square root of (2 * var).
     double logSqrt2Var = 0.5 * (M_LN2 + log(var));
 
-    DoubleVector::const_iterator t = tVec.begin();
-    for (DoubleVector::const_iterator w = wVec.begin(); w != wVec.end(); ++w, ++t)
+    MyDoubleVector::const_iterator t = tVec.begin();
+    for (MyDoubleVector::const_iterator w = wVec.begin(); w != wVec.end(); ++w, ++t)
     {
         nodes.push_back(mode + exp(logSqrt2Var) * (* t));
         logWeights.push_back(log(* w) + (* t) * (* t) + logSqrt2Var);
@@ -113,7 +113,7 @@ double
 ModelData::getLogMargLik(const ModelPar& modPar,
                          double& R2)
 {
-    const DoubleVector& config = modPar.config;
+    const MyDoubleVector& config = modPar.config;
 
     // translate config into linear and splines part
     std::vector<int> whichLinear;
@@ -432,6 +432,8 @@ ModelData::getLogMargLik(const ModelPar& modPar,
 // constructor
 
 // 19/5/2011: names of distribution and link are saved in the object
+// 20/9/2011: move to g prior classes in R_modelData object, so do no longer save
+//            the gPriorString
 GlmModelData::GlmModelData(SEXP R_modelData) :
     rcpp_modelData(R_modelData),
     rhoList(as<List>(rcpp_modelData["rho.list"])),
@@ -444,7 +446,6 @@ GlmModelData::GlmModelData(SEXP R_modelData) :
     nCovs(as<int> (rcpp_modelData["nCovs"])),
     dimSplineBasis(as<int> (rcpp_modelData["dimSplineBasis"])),
     continuous(as<LogicalVector> (rcpp_modelData["continuous"])),
-    gPriorString(as<std::string> (rcpp_modelData["gPrior"])),
     degrees(as<IntVector> (rcpp_modelData["degrees"])),
     nDegrees(degrees.size()),
     y(as<NumericVector> (rcpp_modelData["Y"])),
@@ -475,6 +476,14 @@ GlmModelData::GlmModelData(SEXP R_modelData) :
         Rf_error("Degree vector must start with 0, 1 !");
     }
 
+    // todo: can we accelerate this computation??
+    // (Better linear algebra, OpenMP, ...)
+    // Perhaps it is cheaper to really compute Z^T * W_0 * Z as a whole
+    // as a diagonal matrix, and then select the required subblocks appropriately
+    // in iwls.cpp
+    // One idea to test this: Just have exactly this code in a function
+    // to be called from R, and a switch which selects the approach.
+
     // compute Z_i^T * W_0 * Z_j for each pair 0 <= i <= j < nCovs
     // (so we are interested in the *upper* triangle of the grand matrix Z^T * W_0 * Z)
     for (int i = 0; i < nCovs; ++i)
@@ -503,14 +512,32 @@ GlmModelData::GlmModelData(SEXP R_modelData) :
         // so ZtZarray.at(i).at(j - i) equals Z_i^T * W_0 * Z_j
     }
 
+    // first get the class name of the S4 g-prior object
+    Rcpp::S4 rcpp_gPrior = as<S4>(rcpp_modelData["gPrior"]);
+    std::string gPriorString = rcpp_gPrior.attr("class");
+
     // get the g prior object
-    if(gPriorString == "hyper-g/n")
+    if(gPriorString == "HypergnPrior")
     {
-        gPrior = new HypergnPrior(4.0, nObs);
+        gPrior = new HypergnPrior(as<double>(rcpp_gPrior.slot("a")),
+                                  as<int>(rcpp_gPrior.slot("n")));
     }
-    else // gPriorString == "hyper-g"
+    else if (gPriorString == "HypergPrior")
     {
-        gPrior = new HypergPrior(4.0);
+        gPrior = new HypergPrior(as<double>(rcpp_gPrior.slot("a")));
+    }
+    else if (gPriorString == "InvGammaGPrior")
+    {
+        gPrior = new InvGammaGPrior(as<double>(rcpp_gPrior.slot("a")),
+                                    as<double>(rcpp_gPrior.slot("b")));
+    }
+    else if (gPriorString == "CustomGPrior")
+    {
+        gPrior = new CustomGPrior(as<SEXP>(rcpp_gPrior.slot("logDens")));
+    }
+    else
+    {
+        Rf_error("g-prior not implemented!");
     }
 
     // and now to the family business:
@@ -587,7 +614,7 @@ ModelPar::compDegIndex(const IntVector& degrees)
 {
     degIndex.clear();
 
-    for(DoubleVector::const_iterator
+    for(MyDoubleVector::const_iterator
             i = config.begin();
             i != config.end();
             ++i)
@@ -612,7 +639,7 @@ ModelPar::print() const
     stream << "\nmodel with the following degrees of freedom:\n";
 
     // Iterate over elements
-    for(DoubleVector::const_iterator i = config.begin(); i != config.end(); ++i)
+    for(MyDoubleVector::const_iterator i = config.begin(); i != config.end(); ++i)
     {
         stream << *i << " ";
     }

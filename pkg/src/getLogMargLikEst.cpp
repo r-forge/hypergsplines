@@ -40,8 +40,8 @@ getOmega(const PosInt s, const AMatrix& hDiffHat)
 }
 
 double
-getLogMargLikEst(const DoubleVector& numeratorTerms,
-                 const DoubleVector& denominatorTerms,
+getLogMargLikEst(const MyDoubleVector& numeratorTerms,
+                 const MyDoubleVector& denominatorTerms,
                  double highDensityPointLogUnPosterior,
                  double& se,
                  PosInt endLag)

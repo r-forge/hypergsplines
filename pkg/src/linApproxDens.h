@@ -52,7 +52,7 @@ private:
 
     // normalised density values and cumulative distribution function:
     DoubleDeque ord_dens;
-    DoubleVector cdf;
+    MyDoubleVector cdf;
 
     // number of points, i.e. the dimension of ord_args, ord_dens and cdf:
     PosInt nPoints;

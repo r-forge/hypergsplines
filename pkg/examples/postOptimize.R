@@ -8,7 +8,7 @@ md <- modelData(y=Employed,
                 gPrior="hyper-g/n")
 
 ## get a list of all possible models with this data
-res <- exhaustive(md)
+res <- exhaustive(md)$models
 
 ## now optimize the best model (best wrt to marg lik)
 bestConfig <- res[which.max(res$logMargLik), 1:2]
@@ -28,7 +28,7 @@ md <- glmModelData(y=as.numeric(Employed > 64),
 
 ## and do the exhaustive search
 res <- exhaustive(md,
-                  computation=getComputation(higherOrderCorrection=FALSE))
+                  computation=getComputation(higherOrderCorrection=FALSE))$models
 
 ## now optimize the best model (best wrt to marg lik)
 bestConfig <- res[which.max(res$logMargLik), 1:2]

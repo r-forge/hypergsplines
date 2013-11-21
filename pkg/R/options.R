@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[options.R] by DSB Don 19/05/2011 13:47 (CEST)>
+## Time-stamp: <[options.R] by DSB Die 28/08/2012 09:54 (CEST)>
 ##
 ## Description:
 ## Helper functions to collect options.
@@ -61,7 +61,7 @@ getComputation <- function(verbose=TRUE,
 
 
 
-##' Collect the search options
+##' Collect the search options, todo: really use this in the package!
 ##' 
 ##' @param nModels how many best models should be saved? (default: 1\% of the
 ##' total number of (cached) models). Must not be larger than \code{nCache}.

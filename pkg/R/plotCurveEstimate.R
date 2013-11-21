@@ -2,7 +2,7 @@
 ## Author: Daniel Sabanés Bové [daniel *.* sabanesbove *a*t* ifspm *.* uzh *.* ch]
 ## Project: hypergsplines
 ##        
-## Time-stamp: <[plotCurveEstimate.R] by DSB Mon 04/04/2011 16:02 (CEST)>
+## Time-stamp: <[plotCurveEstimate.R] by DSB Mon 05/08/2013 18:22 (CEST)>
 ##
 ## Description:
 ## Plot function value estimates.
@@ -40,6 +40,9 @@
 ##' is only possible for normal models)
 ##' @param hpd use HPD intervals / bands? (default) Otherwise equi-tailed
 ##' intervals / bands are computed and plotted.
+##' @param plot produce a plot? (default: yes)
+##' Otherwise you could use the returned information to produce the plot
+##' yourself 
 ##' @param estimate type of the estimated curve
 ##' @param ylim y axis limits (has a sensible default to include all points in
 ##' the plot) 
@@ -49,7 +52,9 @@
 ##' @param xlab x axis label (default: \code{covName})
 ##' @param ylab y axis label (default: f(\code{covName}) )
 ##' @param \dots \dots additional plotting parameters
-##' @return currently nothing.
+##' @return A list with the elements \code{x.grid} and \code{lineData},
+##' containing the x axis grid and the different y values for plotting,
+##' respectively.
 ##'
 ##' @example examples/plotCurveEstimate.R
 ##' 
@@ -65,6 +70,7 @@ plotCurveEstimate <- function(covName,
                               partialResids=TRUE,
                               hpd=TRUE,
                               estimate=c("mean", "median"),
+                              plot=TRUE,
                               ...,
                               ylim=NULL,
                               lty=c(1, 2, 2, 2, 2),
@@ -184,16 +190,19 @@ plotCurveEstimate <- function(covName,
         }
     }
     
-    ## setup the plot
-    matplot(x=x.grid,
-            y=lineData,
-            type="n",                   # empty!
-            ...,
-            ylim=ylim,
-            lty=lty,
-            col=col,
-            xlab=xlab,
-            ylab=ylab)
+    if(plot)
+    {
+        ## setup the plot
+        matplot(x=x.grid,
+                y=lineData,
+                type="n",                   # empty!
+                ...,
+                ylim=ylim,
+                lty=lty,
+                col=col,
+                xlab=xlab,
+                ylab=ylab)
+    }
 
     ## optionally add the partial residuals
     if(isNormalModel && partialResids)
@@ -204,15 +213,22 @@ plotCurveEstimate <- function(covName,
                cex=0.5)        
     }
 
-    ## plot the lines now to avoid overplotting by the points
-    matplot(x=x.grid,
-            y=lineData,
-            type="l",                   # draw the lines here
-            ...,
-            ylim=ylim,
-            lty=lty,
-            col=col,
-            xlab=xlab,
-            ylab=ylab,
-            add=TRUE)
+    if(plot)
+    {
+        ## plot the lines now to avoid overplotting by the points
+        matplot(x=x.grid,
+                y=lineData,
+                type="l",                   # draw the lines here
+                ...,
+                ylim=ylim,
+                lty=lty,
+                col=col,
+                xlab=xlab,
+                ylab=ylab,
+                add=TRUE)
+    }
+
+    ## invisibly return the plot data
+    invisible(list(x.grid=x.grid,
+                   lineData=lineData))
 }

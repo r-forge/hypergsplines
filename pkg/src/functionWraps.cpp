@@ -175,8 +175,8 @@ double
 Cache::getValue(double arg) const
 {
     // search for the argument
-    DoubleVector::const_iterator iterVals = vals.begin();
-    for(DoubleVector::const_iterator
+    MyDoubleVector::const_iterator iterVals = vals.begin();
+    for(MyDoubleVector::const_iterator
             iterArgs = args.begin();
             iterArgs != args.end();
             ++iterArgs, ++iterVals)
@@ -194,8 +194,8 @@ Cache::getValue(double arg) const
 
 // initialize from an R list
 Cache::Cache(List& rcpp_list) :
-        args(as<DoubleVector>(rcpp_list["args"])),
-        vals(as<DoubleVector>(rcpp_list["vals"]))
+        args(as<MyDoubleVector>(rcpp_list["args"])),
+        vals(as<MyDoubleVector>(rcpp_list["vals"]))
 {
     if(args.size() != vals.size())
     {

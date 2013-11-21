@@ -151,8 +151,8 @@ struct Samples
     convert2list(const GlmModelData& modelData) const
     {
         // compute t = g / (g + 1) samples:
-        DoubleVector tSamples;
-        for(DoubleVector::const_iterator
+        MyDoubleVector tSamples;
+        for(MyDoubleVector::const_iterator
                 z = zSamples.begin();
                 z != zSamples.end();
                 ++z)
@@ -221,12 +221,12 @@ struct Samples
     PosInt nSaved;
 
     // is gradually extended:
-    DoubleVector zSamples;
+    MyDoubleVector zSamples;
 
     // possibly stays empty if not required by the user:
     // the numerator and denominator terms for the marginal likelihood estimate
-    DoubleVector numerator;
-    DoubleVector denominator;
+    MyDoubleVector numerator;
+    MyDoubleVector denominator;
 
     // which covariates are included as linear and spline effects?
     // this also translates to the ordering of the design matrix!

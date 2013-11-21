@@ -14,9 +14,11 @@ RcppExport SEXP cpp_calculateModel(SEXP R_config,
                                    SEXP R_modelData);
 
 RcppExport SEXP cpp_exhaustive(SEXP R_modelData,
+                               SEXP R_modelPrior,
                                SEXP R_modelConfigs);
 
 RcppExport SEXP cpp_exhaustive2(SEXP R_modelData,
+                                SEXP R_modelPrior,
                                 SEXP R_modelConfigs);
 
 RcppExport SEXP cpp_stochSearch(SEXP R_modelData,
@@ -29,6 +31,7 @@ RcppExport SEXP cpp_glmStochSearch(SEXP R_modelData,
                                    SEXP R_computation);
 
 RcppExport SEXP cpp_glmExhaustive(SEXP R_modelData,
+                                  SEXP R_modelPrior,
                                   SEXP R_modelConfigs,
                                   SEXP R_computation);
 

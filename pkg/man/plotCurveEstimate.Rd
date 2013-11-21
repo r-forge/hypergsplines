@@ -5,8 +5,8 @@
   plotCurveEstimate(covName, samples, modelData,
     nGrid = 200L, plevel = 0.95, slevel = plevel,
     partialResids = TRUE, hpd = TRUE,
-    estimate = c("mean", "median"), ..., ylim = NULL,
-    lty = c(1, 2, 2, 2, 2),
+    estimate = c("mean", "median"), plot = TRUE, ...,
+    ylim = NULL, lty = c(1, 2, 2, 2, 2),
     col = c("black", "blue", "blue", "green", "green"),
     xlab = covName,
     ylab = paste("f(", covName, ")", sep = ""))
@@ -36,6 +36,10 @@
   \item{hpd}{use HPD intervals / bands? (default) Otherwise
   equi-tailed intervals / bands are computed and plotted.}
 
+  \item{plot}{produce a plot? (default: yes) Otherwise you
+  could use the returned information to produce the plot
+  yourself}
+
   \item{estimate}{type of the estimated curve}
 
   \item{ylim}{y axis limits (has a sensible default to
@@ -55,7 +59,9 @@
   \item{\dots}{\dots additional plotting parameters}
 }
 \value{
-  currently nothing.
+  A list with the elements \code{x.grid} and
+  \code{lineData}, containing the x axis grid and the
+  different y values for plotting, respectively.
 }
 \description{
   Plot function value estimates
